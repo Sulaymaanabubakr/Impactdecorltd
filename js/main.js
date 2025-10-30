@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize navbar scroll effect
     initNavbarScroll();
     
+    // Initialize scroll-to-top button
+    initScrollToTop();
+    
     // Load recent projects on homepage
     if (document.getElementById('recent-projects')) {
         loadRecentProjects();
@@ -161,3 +164,27 @@ function setActiveNavLink() {
 
 // Call on page load
 document.addEventListener('DOMContentLoaded', setActiveNavLink);
+
+// Scroll-to-Top Button
+function initScrollToTop() {
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    
+    if (scrollToTopBtn) {
+        // Show/hide button based on scroll position
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+        
+        // Smooth scroll to top on click
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
