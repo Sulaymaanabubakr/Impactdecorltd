@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Contact Impact Decor Ltd for professional painting and decorating services in Brighton and Sussex. Call, email, or WhatsApp us today.">
-    <title>Contact Us - Impact Decor Ltd | Get in Touch</title>
+    <meta name="description" content="View our portfolio of completed painting, decorating, and renovation projects in Brighton and Sussex. Before and after photos and videos.">
+    <title>Gallery - Impact Decor Ltd | Our Work Portfolio</title>
     
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,58 +13,109 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <style>
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-        
-        .contact-info-card {
-            background: var(--warm-grey);
-            padding: 2rem;
-            border-radius: 16px;
-            margin-bottom: 1.5rem;
-        }
-        
-        .contact-info-card h3 {
-            color: var(--deep-royal-blue);
-            margin-bottom: 1rem;
+        .gallery-tabs {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
         }
         
-        .contact-info-card p {
-            margin-bottom: 0.5rem;
-        }
-        
-        .contact-info-card a {
-            color: var(--text-light);
+        .gallery-tab {
+            padding: 1rem 2.5rem;
+            background: var(--warm-grey);
+            color: var(--deep-royal-blue);
+            border: none;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: var(--transition-smooth);
         }
         
-        .contact-info-card a:hover {
-            color: var(--sun-flare);
+        .gallery-tab.active {
+            background: var(--sun-flare);
+            color: var(--deep-royal-blue);
         }
         
-        .map-container {
-            margin-top: 3rem;
-            border-radius: 16px;
-            overflow: hidden;
+        .gallery-tab:hover {
+            transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
         
-        .map-container iframe {
-            width: 100%;
-            height: 400px;
-            border: none;
+        .gallery-content {
+            display: none;
         }
         
-        @media (max-width: 768px) {
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
+        .gallery-content.active {
+            display: block;
+        }
+        
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .lightbox.show {
+            display: flex;
+        }
+        
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+        
+        .lightbox-content img,
+        .lightbox-content video {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            font-weight: 300;
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 3rem;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .lightbox-prev {
+            left: 20px;
+        }
+        
+        .lightbox-next {
+            right: 20px;
         }
     </style>
 </head>
@@ -86,9 +137,9 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="about.html">About Us</a></li>
                     <li><a href="services.html">Services</a></li>
-                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="gallery.html" class="active">Gallery</a></li>
                     <li><a href="testimonials.html">Reviews</a></li>
-                    <li><a href="contact.html" class="active">Contact</a></li>
+                    <li><a href="contact.html">Contact</a></li>
                     <li><a href="quote.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Get a Quote</a></li>
                 </ul>
             </div>
@@ -102,86 +153,64 @@
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
-            <h1 data-aos="fade-up">Get in Touch</h1>
-            <p data-aos="fade-up" data-aos-delay="200">We're here to help with your painting and decorating needs</p>
+            <h1 data-aos="fade-up">Our Work Gallery</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Explore our portfolio of completed projects</p>
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Gallery Section -->
     <section style="padding: 5rem 0;">
         <div class="container">
-            <div class="contact-grid">
-                <!-- Contact Information -->
-                <div data-aos="fade-up">
-                    <h2>Contact Information</h2>
-                    <p class="mb-2">Get in touch with us today. We're happy to answer any questions and provide free, no-obligation quotes.</p>
-                    
-                    <div class="contact-info-card">
-                        <h3>📞 Phone</h3>
-                        <p><a href="tel:+441273123456">+44 1273 123 456</a></p>
-                        <p style="font-size: 0.9rem; color: var(--text-light);">Mon-Fri: 8am-6pm | Sat: 9am-4pm</p>
+            <!-- Gallery Tabs -->
+            <div class="gallery-tabs" data-aos="fade-up">
+                <button class="gallery-tab active" onclick="switchGalleryTab('images')">📷 Images</button>
+                <button class="gallery-tab" onclick="switchGalleryTab('videos')">🎥 Videos</button>
+            </div>
+
+            <!-- Images Gallery -->
+            <div id="images-gallery" class="gallery-content active">
+                <h2 class="text-center" data-aos="fade-up">Project Images</h2>
+                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Browse our collection of completed work</p>
+                <div class="projects-grid" id="images-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading images...</p>
                     </div>
-
-                    <div class="contact-info-card">
-                        <h3>📧 Email</h3>
-                        <p><a href="mailto:info@impactdecor.co.uk">info@impactdecor.co.uk</a></p>
-                        <p style="font-size: 0.9rem; color: var(--text-light);">We respond within 24 hours</p>
-                    </div>
-
-                    <div class="contact-info-card">
-                        <h3>💬 WhatsApp</h3>
-                        <p><a href="https://wa.me/441273123456" target="_blank">Click to chat on WhatsApp</a></p>
-                        <p style="font-size: 0.9rem; color: var(--text-light);">Quick responses during business hours</p>
-                    </div>
-
-                    <div class="contact-info-card">
-                        <h3>📍 Location</h3>
-                        <p>Brighton, East Sussex<br>United Kingdom</p>
-                        <p style="font-size: 0.9rem; color: var(--text-light);">Serving Brighton and Sussex</p>
-                    </div>
-                </div>
-
-                <!-- Contact Form -->
-                <div data-aos="fade-up" data-aos-delay="200">
-                    <h2>Send Us a Message</h2>
-                    <p class="mb-2">Fill out the form below and we'll get back to you as soon as possible.</p>
-                    
-                    <form id="contact-form">
-                        <div class="form-group">
-                            <label for="name">Full Name *</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email Address *</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="message">Message *</label>
-                            <textarea id="message" name="message" required placeholder="Tell us about your project..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" id="submit-btn">
-                            Send Message
-                        </button>
-                    </form>
                 </div>
             </div>
 
-            <!-- Google Map -->
-            <div class="map-container" data-aos="fade-up">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40330.54928826!2d-0.17!3d50.82!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487585b89f636f7f%3A0x3080675a1929c46!2sBrighton%2C%20UK!5e0!3m2!1sen!2suk!4v1234567890"
-                    allowfullscreen
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+            <!-- Videos Gallery -->
+            <div id="videos-gallery" class="gallery-content">
+                <h2 class="text-center" data-aos="fade-up">Project Videos</h2>
+                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Watch our projects in action</p>
+                <div class="projects-grid" id="videos-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading videos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
+            <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
+            <img id="lightbox-image" src="" alt="Gallery image" style="display: none;">
+            <video id="lightbox-video" controls style="display: none;"></video>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content" data-aos="fade-up">
+                <h2>Ready to Start Your Project?</h2>
+                <p>Let us transform your space like these</p>
+                <a href="quote.html" class="btn btn-primary">Get a Free Quote</a>
             </div>
         </div>
     </section>
@@ -217,7 +246,7 @@
                 <div class="footer-column">
                     <h4>Follow Us</h4>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook" title="Facebook">��</a>
+                        <a href="#" aria-label="Facebook" title="Facebook">📘</a>
                         <a href="#" aria-label="Instagram" title="Instagram">📷</a>
                         <a href="#" aria-label="LinkedIn" title="LinkedIn">💼</a>
                         <a href="#" aria-label="Twitter" title="Twitter">🐦</a>
@@ -248,6 +277,6 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/contact.js"></script>
+    <script src="js/gallery.js"></script>
 </body>
 </html>

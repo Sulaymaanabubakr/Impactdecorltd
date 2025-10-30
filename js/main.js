@@ -1,158 +1,163 @@
-// Main JavaScript for Impact Decor Limited
+// Main JavaScript for Impact Decor Ltd Website
 
-// Initialize AOS (Animate on Scroll)
-AOS.init({
-    duration: 800,
-    easing: 'ease-in-out',
-    once: true,
-    offset: 100
+// Initialize AOS (Animate On Scroll)
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+    }
+    
+    // Initialize mobile navigation
+    initMobileNav();
+    
+    // Initialize navbar scroll effect
+    initNavbarScroll();
+    
+    // Load recent projects on homepage
+    if (document.getElementById('recent-projects')) {
+        loadRecentProjects();
+    }
 });
 
 // Mobile Navigation Toggle
-const mobileToggle = document.querySelector('.mobile-toggle');
-const navMenu = document.querySelector('.nav-menu');
-
-if (mobileToggle && navMenu) {
-    mobileToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-    });
-
-    // Close menu when clicking on a link
-    const navLinks = document.querySelectorAll('.nav-menu a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            navMenu.classList.remove('active');
+function initMobileNav() {
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    if (mobileToggle && navMenu) {
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.classList.toggle('active');
         });
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.nav-content')) {
-            navMenu.classList.remove('active');
-        }
-    });
-}
-
-// Fetch and display recent projects on homepage
-async function loadRecentProjects() {
-    if (!db) return;
-
-    const imagesContainer = document.getElementById('recent-images');
-    const videosContainer = document.getElementById('recent-videos');
-
-    if (!imagesContainer && !videosContainer) return;
-
-    try {
-        // Fetch recent images
-        if (imagesContainer) {
-            const imagesSnapshot = await db.collection('media')
-                .where('type', '==', 'image')
-                .orderBy('uploadDate', 'desc')
-                .limit(6)
-                .get();
-
-            if (imagesSnapshot.empty) {
-                imagesContainer.innerHTML = '<p class="loading">No images available yet.</p>';
-            } else {
-                imagesContainer.innerHTML = '';
-                imagesSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const card = createProjectCard(data);
-                    imagesContainer.appendChild(card);
-                });
+        
+        // Close menu when clicking on a link
+        const navLinks = navMenu.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                mobileToggle.classList.remove('active');
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+                mobileToggle.classList.remove('active');
             }
-        }
-
-        // Fetch recent videos
-        if (videosContainer) {
-            const videosSnapshot = await db.collection('media')
-                .where('type', '==', 'video')
-                .orderBy('uploadDate', 'desc')
-                .limit(6)
-                .get();
-
-            if (videosSnapshot.empty) {
-                videosContainer.innerHTML = '<p class="loading">No videos available yet.</p>';
-            } else {
-                videosContainer.innerHTML = '';
-                videosSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const card = createProjectCard(data);
-                    videosContainer.appendChild(card);
-                });
-            }
-        }
-    } catch (error) {
-        console.error('Error loading projects:', error);
-        if (imagesContainer) {
-            imagesContainer.innerHTML = '<p class="loading">Error loading images.</p>';
-        }
-        if (videosContainer) {
-            videosContainer.innerHTML = '<p class="loading">Error loading videos.</p>';
-        }
+        });
     }
 }
 
-// Create project card element
-function createProjectCard(data) {
+// Navbar Scroll Effect
+function initNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    
+    if (navbar) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    }
+}
+
+// Load Recent Projects for Homepage
+async function loadRecentProjects() {
+    const projectsGrid = document.getElementById('recent-projects');
+    if (!projectsGrid || !db) return;
+    
+    try {
+        // Fetch last 10 images and videos
+        const imagesQuery = db.collection('media')
+            .where('type', '==', 'image')
+            .orderBy('uploadedAt', 'desc')
+            .limit(5);
+            
+        const videosQuery = db.collection('media')
+            .where('type', '==', 'video')
+            .orderBy('uploadedAt', 'desc')
+            .limit(5);
+        
+        const [imagesSnapshot, videosSnapshot] = await Promise.all([
+            imagesQuery.get(),
+            videosQuery.get()
+        ]);
+        
+        const allMedia = [];
+        
+        imagesSnapshot.forEach(doc => {
+            allMedia.push({ id: doc.id, ...doc.data() });
+        });
+        
+        videosSnapshot.forEach(doc => {
+            allMedia.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Sort by date and limit to 10
+        allMedia.sort((a, b) => b.uploadedAt - a.uploadedAt);
+        const recentMedia = allMedia.slice(0, 10);
+        
+        projectsGrid.innerHTML = '';
+        
+        if (recentMedia.length === 0) {
+            projectsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No projects available yet.</p>';
+            return;
+        }
+        
+        recentMedia.forEach(item => {
+            const card = createProjectCard(item);
+            projectsGrid.appendChild(card);
+        });
+        
+    } catch (error) {
+        console.error('Error loading recent projects:', error);
+        projectsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--text-light);">Unable to load projects at this time.</p>';
+    }
+}
+
+// Create Project Card
+function createProjectCard(item) {
     const card = document.createElement('div');
     card.className = 'project-card';
     card.setAttribute('data-aos', 'fade-up');
-
-    if (data.type === 'image') {
-        card.innerHTML = `
-            <img src="${data.url}" alt="${data.title}" loading="lazy">
-            <div class="project-info">
-                <h3>${data.title}</h3>
-                <p>${data.description}</p>
-            </div>
-        `;
-    } else {
-        card.innerHTML = `
-            <video src="${data.url}" loading="lazy" muted></video>
-            <div class="project-info">
-                <h3>${data.title}</h3>
-                <p>${data.description}</p>
-            </div>
-        `;
-    }
-
+    
+    const mediaElement = item.type === 'video' 
+        ? `<video src="${item.url}" class="project-media"></video>`
+        : `<img src="${item.url}" alt="${item.title || 'Project'}" class="project-media">`;
+    
+    card.innerHTML = `
+        ${mediaElement}
+        <div class="project-info">
+            <h3>${item.title || 'Untitled Project'}</h3>
+            <p>${item.description || 'No description available'}</p>
+            <div class="project-date">${formatDate(item.uploadedAt)}</div>
+        </div>
+    `;
+    
     return card;
 }
 
-// Initialize homepage
-if (document.getElementById('recent-images') || document.getElementById('recent-videos')) {
-    loadRecentProjects();
-}
-
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Navbar scroll effect
-let lastScroll = 0;
-const navbar = document.querySelector('.navbar');
-
-if (navbar) {
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        
-        if (currentScroll <= 0) {
-            navbar.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+// Set active nav link based on current page
+function setActiveNavLink() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+            link.classList.add('active');
         } else {
-            navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+            link.classList.remove('active');
         }
-        
-        lastScroll = currentScroll;
     });
 }
+
+// Call on page load
+document.addEventListener('DOMContentLoaded', setActiveNavLink);

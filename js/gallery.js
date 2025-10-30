@@ -1,184 +1,193 @@
-// Gallery JavaScript for Images and Videos pages
+// Gallery Page JavaScript
 
-let allItems = [];
-let currentItemIndex = 0;
+let currentGalleryType = 'images';
+let currentLightboxIndex = 0;
+let currentMediaArray = [];
 
-async function loadGallery(type) {
-    if (!db) return;
+// Switch Gallery Tab
+function switchGalleryTab(type) {
+    currentGalleryType = type;
+    
+    // Update tabs
+    const tabs = document.querySelectorAll('.gallery-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Update content
+    const contents = document.querySelectorAll('.gallery-content');
+    contents.forEach(content => content.classList.remove('active'));
+    document.getElementById(`${type}-gallery`).classList.add('active');
+    
+    // Load media
+    if (type === 'images') {
+        loadImages();
+    } else {
+        loadVideos();
+    }
+}
 
-    const galleryContainer = type === 'image' 
-        ? document.getElementById('imagesGallery')
-        : document.getElementById('videosGallery');
-
-    if (!galleryContainer) return;
-
+// Load Images from Firebase
+async function loadImages() {
+    const grid = document.getElementById('images-grid');
+    if (!grid || !db) return;
+    
     try {
         const snapshot = await db.collection('media')
-            .where('type', '==', type)
-            .orderBy('uploadDate', 'desc')
+            .where('type', '==', 'image')
+            .orderBy('uploadedAt', 'desc')
             .get();
-
+        
+        grid.innerHTML = '';
+        currentMediaArray = [];
+        
         if (snapshot.empty) {
-            galleryContainer.innerHTML = `<p class="loading">No ${type}s available yet.</p>`;
-        } else {
-            galleryContainer.innerHTML = '';
-            allItems = [];
-            
-            snapshot.forEach((doc, index) => {
-                const data = { id: doc.id, ...doc.data() };
-                allItems.push(data);
-                const item = createGalleryItem(data, index, type);
-                galleryContainer.appendChild(item);
-            });
+            grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No images available yet.</p>';
+            return;
         }
+        
+        snapshot.forEach((doc, index) => {
+            const data = { id: doc.id, ...doc.data() };
+            currentMediaArray.push(data);
+            
+            const card = createGalleryCard(data, index);
+            grid.appendChild(card);
+        });
+        
     } catch (error) {
-        console.error(`Error loading ${type}s:`, error);
-        galleryContainer.innerHTML = `<p class="loading">Error loading ${type}s.</p>`;
+        console.error('Error loading images:', error);
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Unable to load images.</p>';
     }
 }
 
-function createGalleryItem(data, index, type) {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.setAttribute('data-aos', 'fade-up');
-    item.onclick = () => openModal(index, type);
-
-    if (type === 'image') {
-        item.innerHTML = `
-            <img src="${data.url}" alt="${data.title}" loading="lazy">
-            <div class="gallery-item-overlay">
-                <h3>${data.title}</h3>
-                <p>${data.description}</p>
-            </div>
-        `;
-    } else {
-        item.innerHTML = `
-            <video src="${data.url}" loading="lazy" muted></video>
-            <div class="gallery-item-overlay">
-                <h3>${data.title}</h3>
-                <p>${data.description}</p>
-            </div>
-        `;
+// Load Videos from Firebase
+async function loadVideos() {
+    const grid = document.getElementById('videos-grid');
+    if (!grid || !db) return;
+    
+    try {
+        const snapshot = await db.collection('media')
+            .where('type', '==', 'video')
+            .orderBy('uploadedAt', 'desc')
+            .get();
+        
+        grid.innerHTML = '';
+        currentMediaArray = [];
+        
+        if (snapshot.empty) {
+            grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No videos available yet.</p>';
+            return;
+        }
+        
+        snapshot.forEach((doc, index) => {
+            const data = { id: doc.id, ...doc.data() };
+            currentMediaArray.push(data);
+            
+            const card = createGalleryCard(data, index);
+            grid.appendChild(card);
+        });
+        
+    } catch (error) {
+        console.error('Error loading videos:', error);
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Unable to load videos.</p>';
     }
-
-    return item;
 }
 
-function openModal(index, type) {
-    currentItemIndex = index;
-    const item = allItems[index];
+// Create Gallery Card
+function createGalleryCard(item, index) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.setAttribute('data-aos', 'fade-up');
+    card.onclick = () => openLightbox(index);
     
-    const modal = type === 'image' 
-        ? document.getElementById('imageModal')
-        : document.getElementById('videoModal');
+    const mediaElement = item.type === 'video' 
+        ? `<video src="${item.url}" class="project-media"></video>`
+        : `<img src="${item.url}" alt="${item.title || 'Gallery item'}" class="project-media">`;
     
-    if (!modal) return;
+    card.innerHTML = `
+        ${mediaElement}
+        <div class="project-info">
+            <h3>${item.title || 'Untitled'}</h3>
+            <p>${item.description || 'No description'}</p>
+            <div class="project-date">${formatDate(item.uploadedAt)}</div>
+        </div>
+    `;
+    
+    return card;
+}
 
-    if (type === 'image') {
-        document.getElementById('modalImage').src = item.url;
+// Open Lightbox
+function openLightbox(index) {
+    currentLightboxIndex = index;
+    const lightbox = document.getElementById('lightbox');
+    const item = currentMediaArray[index];
+    
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxVideo = document.getElementById('lightbox-video');
+    
+    if (item.type === 'video') {
+        lightboxImage.style.display = 'none';
+        lightboxVideo.style.display = 'block';
+        lightboxVideo.src = item.url;
     } else {
-        const videoElement = document.getElementById('modalVideo');
-        videoElement.src = item.url;
-        videoElement.load();
+        lightboxVideo.style.display = 'none';
+        lightboxImage.style.display = 'block';
+        lightboxImage.src = item.url;
+        lightboxImage.alt = item.title || 'Gallery image';
     }
-
-    document.getElementById('modalTitle').textContent = item.title;
-    document.getElementById('modalDescription').textContent = item.description;
-    document.getElementById('modalDate').textContent = formatDate(item.uploadDate);
-
-    modal.classList.add('active');
-    modal.style.display = 'flex';
+    
+    lightbox.classList.add('show');
     document.body.style.overflow = 'hidden';
 }
 
-function closeModal() {
-    const imageModal = document.getElementById('imageModal');
-    const videoModal = document.getElementById('videoModal');
+// Close Lightbox
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxVideo = document.getElementById('lightbox-video');
     
-    if (imageModal) {
-        imageModal.classList.remove('active');
-        imageModal.style.display = 'none';
-    }
-    
-    if (videoModal) {
-        const videoElement = document.getElementById('modalVideo');
-        if (videoElement) {
-            videoElement.pause();
-            videoElement.currentTime = 0;
-        }
-        videoModal.classList.remove('active');
-        videoModal.style.display = 'none';
-    }
-    
+    lightbox.classList.remove('show');
+    lightboxVideo.pause();
+    lightboxVideo.src = '';
     document.body.style.overflow = 'auto';
 }
 
-function navigateModal(direction, type) {
-    currentItemIndex += direction;
+// Navigate Lightbox
+function navigateLightbox(direction) {
+    currentLightboxIndex += direction;
     
-    if (currentItemIndex < 0) {
-        currentItemIndex = allItems.length - 1;
-    } else if (currentItemIndex >= allItems.length) {
-        currentItemIndex = 0;
+    if (currentLightboxIndex < 0) {
+        currentLightboxIndex = currentMediaArray.length - 1;
+    } else if (currentLightboxIndex >= currentMediaArray.length) {
+        currentLightboxIndex = 0;
     }
     
-    openModal(currentItemIndex, type);
+    openLightbox(currentLightboxIndex);
 }
 
-// Event listeners for modals
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox && lightbox.classList.contains('show')) {
+        if (e.key === 'ArrowLeft') {
+            navigateLightbox(-1);
+        } else if (e.key === 'ArrowRight') {
+            navigateLightbox(1);
+        } else if (e.key === 'Escape') {
+            closeLightbox();
+        }
+    }
+});
+
+// Close lightbox when clicking outside
 document.addEventListener('DOMContentLoaded', () => {
-    // Close buttons
-    const closeButtons = document.querySelectorAll('.modal-close');
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', closeModal);
-    });
-
-    // Navigation buttons for image modal
-    const imageModal = document.getElementById('imageModal');
-    if (imageModal) {
-        const prevBtn = imageModal.querySelector('.modal-prev');
-        const nextBtn = imageModal.querySelector('.modal-next');
-        
-        if (prevBtn) prevBtn.addEventListener('click', () => navigateModal(-1, 'image'));
-        if (nextBtn) nextBtn.addEventListener('click', () => navigateModal(1, 'image'));
-
-        imageModal.addEventListener('click', (e) => {
-            if (e.target === imageModal) closeModal();
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
         });
     }
-
-    // Navigation buttons for video modal
-    const videoModal = document.getElementById('videoModal');
-    if (videoModal) {
-        const prevBtn = videoModal.querySelector('.modal-prev');
-        const nextBtn = videoModal.querySelector('.modal-next');
-        
-        if (prevBtn) prevBtn.addEventListener('click', () => navigateModal(-1, 'video'));
-        if (nextBtn) nextBtn.addEventListener('click', () => navigateModal(1, 'video'));
-
-        videoModal.addEventListener('click', (e) => {
-            if (e.target === videoModal) closeModal();
-        });
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (imageModal && imageModal.classList.contains('active')) {
-            if (e.key === 'ArrowLeft') navigateModal(-1, 'image');
-            if (e.key === 'ArrowRight') navigateModal(1, 'image');
-            if (e.key === 'Escape') closeModal();
-        }
-        if (videoModal && videoModal.classList.contains('active')) {
-            if (e.key === 'ArrowLeft') navigateModal(-1, 'video');
-            if (e.key === 'ArrowRight') navigateModal(1, 'video');
-            if (e.key === 'Escape') closeModal();
-        }
-    });
-
-    // Load appropriate gallery based on current page
-    if (document.getElementById('imagesGallery')) {
-        loadGallery('image');
-    } else if (document.getElementById('videosGallery')) {
-        loadGallery('video');
-    }
+    
+    // Load initial gallery
+    loadImages();
 });

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Request a free quote from Impact Decor Ltd for painting, decorating, and renovation services in Brighton and Sussex.">
+    <title>Request a Free Quote - Impact Decor Ltd</title>
+    
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <style>
+        .quote-form-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .photo-upload-preview {
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .photo-upload-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .upload-status {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="logo">
+                    <span class="logo-text">Impact Decor</span>
+                    <span class="logo-subtitle">INNOVATION. INTEGRITY. IMPACT.</span>
+                </a>
+                <button class="mobile-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="testimonials.html">Reviews</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="quote.html" class="btn btn-primary active" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Get a Quote</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="hero" style="min-height: 50vh; margin-top: 80px;">
+        <div class="hero-video-container">
+            <div class="hero-image" style="background: linear-gradient(135deg, rgba(0, 43, 91, 0.9), rgba(255, 209, 102, 0.4)), url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 800%22><rect fill=%22%23002B5B%22 width=%221200%22 height=%22800%22/></svg>'); background-size: cover; background-position: center;"></div>
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <h1 data-aos="fade-up">Request a Free Quote</h1>
+            <p data-aos="fade-up" data-aos-delay="200">No obligation • Fast response • Competitive prices</p>
+        </div>
+    </section>
+
+    <!-- Quote Form Section -->
+    <section style="padding: 5rem 0;">
+        <div class="container">
+            <div class="quote-form-container" data-aos="fade-up">
+                <h2>Get Your Free Quote</h2>
+                <p class="mb-3">Fill out the form below and we'll get back to you with a detailed quote within 24 hours. You can also upload photos of the space you'd like us to work on.</p>
+                
+                <form id="quote-form">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Property Address</label>
+                        <input type="text" id="address" name="address" placeholder="Street address, Town, Postcode">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="service">Service Needed *</label>
+                        <select id="service" name="service" required>
+                            <option value="">Please select a service</option>
+                            <option value="interior-painting">Interior Painting</option>
+                            <option value="exterior-painting">Exterior Painting</option>
+                            <option value="wallpaper">Wallpaper Installation</option>
+                            <option value="plumbing">Domestic Plumbing</option>
+                            <option value="tiling">Tiling (Kitchens, Bathrooms, Floors)</option>
+                            <option value="coving">Coving & Moulding</option>
+                            <option value="surface-prep">Surface Preparation & Plaster Repair</option>
+                            <option value="carpentry">Carpentry & Fittings</option>
+                            <option value="property-maintenance">Property Maintenance & Renovation</option>
+                            <option value="other">Other (please specify in message)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Project Details *</label>
+                        <textarea id="message" name="message" required placeholder="Please describe your project, including size of area, timeline, and any specific requirements..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photo">Upload Photos (Optional)</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" multiple>
+                        <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.5rem;">
+                            Upload photos of the space you'd like us to work on (max 5 photos, 10MB each)
+                        </p>
+                        <div id="photo-preview" class="photo-upload-preview"></div>
+                        <div id="upload-status" class="upload-status"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        Request a Free Quote
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="intro-section">
+        <div class="container">
+            <h2 class="text-center" data-aos="fade-up">What Happens Next?</h2>
+            <div style="max-width: 900px; margin: 2rem auto;">
+                <div class="services-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                    <div style="text-align: center;" data-aos="fade-up" data-aos-delay="100">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">1️⃣</div>
+                        <h4>We Review</h4>
+                        <p>We carefully review your requirements and photos</p>
+                    </div>
+                    <div style="text-align: center;" data-aos="fade-up" data-aos-delay="200">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">2️⃣</div>
+                        <h4>We Contact You</h4>
+                        <p>We call or email within 24 hours to discuss details</p>
+                    </div>
+                    <div style="text-align: center;" data-aos="fade-up" data-aos-delay="300">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">3️⃣</div>
+                        <h4>We Quote</h4>
+                        <p>You receive a detailed, transparent quote</p>
+                    </div>
+                    <div style="text-align: center;" data-aos="fade-up" data-aos-delay="400">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">4️⃣</div>
+                        <h4>We Deliver</h4>
+                        <p>Once approved, we schedule and complete your project</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Impact Decor Ltd</h3>
+                    <p><strong>Innovation. Integrity. Impact.</strong></p>
+                    <p>Professional painters and decorators serving Brighton and Sussex with over 17 years of excellence.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact Us</h4>
+                    <p>📍 Brighton, East Sussex<br>United Kingdom</p>
+                    <p>📧 info@impactdecor.co.uk</p>
+                    <p>📞 +44 1273 123 456</p>
+                    <p>⏰ Mon-Fri: 8am-6pm<br>Sat: 9am-4pm</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="testimonials.html">Reviews</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="quote.html">Get a Quote</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook" title="Facebook">📘</a>
+                        <a href="#" aria-label="Instagram" title="Instagram">📷</a>
+                        <a href="#" aria-label="LinkedIn" title="LinkedIn">💼</a>
+                        <a href="#" aria-label="Twitter" title="Twitter">🐦</a>
+                    </div>
+                    <p style="margin-top: 1.5rem;">Fully insured & qualified<br>NVQ & City & Guilds certified</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year"></span> Impact Decor Ltd. All rights reserved. Company registered in England and Wales.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/441273123456" class="whatsapp-float" target="_blank" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">
+        💬
+    </a>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/quote.js"></script>
+</body>
+</html>

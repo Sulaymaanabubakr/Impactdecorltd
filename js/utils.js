@@ -1,4 +1,4 @@
-// Utility Functions
+// Utility Functions for Impact Decor Ltd Website
 
 // Show toast notification
 function showToast(message, type = 'success') {
@@ -11,44 +11,38 @@ function showToast(message, type = 'success') {
     
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 3000);
+    }, 4000);
 }
 
-// Format date
-function formatDate(date) {
-    if (!date) return '';
-    const d = date.toDate ? date.toDate() : new Date(date);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return d.toLocaleDateString('en-GB', options);
+// Format date for display
+function formatDate(timestamp) {
+    if (!timestamp) return 'N/A';
+    
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('en-GB', options);
 }
 
-// Upload to Cloudinary
-async function uploadToCloudinary(file, resourceType = 'auto') {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    formData.append('cloud_name', CLOUDINARY_CLOUD_NAME);
-    
-    const endpoint = resourceType === 'video' 
-        ? `${CLOUDINARY_API_URL}/video/upload`
-        : `${CLOUDINARY_API_URL}/image/upload`;
-    
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            body: formData
-        });
-        
-        if (!response.ok) {
-            throw new Error('Upload failed');
-        }
-        
-        const data = await response.json();
-        return data.secure_url;
-    } catch (error) {
-        console.error('Cloudinary upload error:', error);
-        throw error;
-    }
+// Validate email format
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Validate UK phone number
+function isValidUKPhone(phone) {
+    // Remove spaces and common formatting
+    const cleanPhone = phone.replace(/[\s()-]/g, '');
+    // Check if it's a valid UK format
+    const ukPhoneRegex = /^(\+44|0044|0)[1-9]\d{9,10}$/;
+    return ukPhoneRegex.test(cleanPhone);
+}
+
+// Sanitize input to prevent XSS
+function sanitizeInput(input) {
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML;
 }
 
 // Lazy load images
@@ -69,8 +63,55 @@ function lazyLoadImages() {
     images.forEach(img => imageObserver.observe(img));
 }
 
-// Set current year in footer
-function setCurrentYear() {
+// Debounce function for performance
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Check if element is in viewport
+function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
+// Smooth scroll to element
+function smoothScrollTo(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Get query parameter from URL
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+// Initialize current year in footer
+function updateCurrentYear() {
     const yearElements = document.querySelectorAll('#current-year');
     const currentYear = new Date().getFullYear();
     yearElements.forEach(el => {
@@ -78,8 +119,8 @@ function setCurrentYear() {
     });
 }
 
-// Initialize on page load
+// Call on page load
 document.addEventListener('DOMContentLoaded', () => {
-    setCurrentYear();
+    updateCurrentYear();
     lazyLoadImages();
 });

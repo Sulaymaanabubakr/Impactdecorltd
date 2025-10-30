@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Impact Decor Limited - Premium construction, refurbishment, and interior design services in the United Kingdom. Building Excellence. Delivering Trust.">
-    <meta property="og:title" content="Impact Decor Limited - Building Excellence">
-    <meta property="og:description" content="Premium construction company in the UK specializing in construction, refurbishment, painting, interior design, and project management.">
+    <meta name="description" content="Impact Decor Ltd - Professional Painters & Decorators in Brighton and Sussex. 17 years of excellence in painting, decorating, and property renovation. Innovation. Integrity. Impact.">
+    <meta name="keywords" content="painter Brighton, decorator Brighton, painting Sussex, house renovation Brighton, professional decorating Sussex">
+    <meta property="og:title" content="Impact Decor Ltd - Professional Painters & Decorators Brighton">
+    <meta property="og:description" content="Bringing Colour, Craftsmanship, and Class to Every Home in Brighton and Sussex">
     <meta property="og:type" content="website">
-    <title>Impact Decor Limited - Building Excellence. Delivering Trust.</title>
+    <title>Impact Decor Ltd - Professional Painters & Decorators Brighton & Sussex</title>
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    
+    <!-- Google Fonts - Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
 </head>
@@ -22,7 +29,7 @@
             <div class="nav-content">
                 <a href="index.html" class="logo">
                     <span class="logo-text">Impact Decor</span>
-                    <span class="logo-subtitle">Limited</span>
+                    <span class="logo-subtitle">INNOVATION. INTEGRITY. IMPACT.</span>
                 </a>
                 <button class="mobile-toggle" aria-label="Toggle navigation">
                     <span></span>
@@ -31,10 +38,12 @@
                 </button>
                 <ul class="nav-menu">
                     <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="about.html">About</a></li>
+                    <li><a href="about.html">About Us</a></li>
                     <li><a href="services.html">Services</a></li>
-                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="testimonials.html">Reviews</a></li>
                     <li><a href="contact.html">Contact</a></li>
+                    <li><a href="quote.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Get a Quote</a></li>
                 </ul>
             </div>
         </div>
@@ -43,25 +52,80 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-video-container">
-            <video autoplay muted loop playsinline class="hero-video">
-                <source src="assets/hero-video.mp4" type="video/mp4">
-            </video>
+            <div class="hero-image" style="background: linear-gradient(135deg, rgba(0, 43, 91, 0.85), rgba(255, 209, 102, 0.3)), url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 800%22><rect fill=%22%23002B5B%22 width=%221200%22 height=%22800%22/><path fill=%22%23FFD166%22 opacity=%220.1%22 d=%22M0,400 Q300,200 600,400 T1200,400 L1200,800 L0,800 Z%22/></svg>'); background-size: cover; background-position: center;"></div>
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
-            <h1 data-aos="fade-up">Building Excellence.<br>Delivering Trust.</h1>
-            <p data-aos="fade-up" data-aos-delay="200">Premium construction and refurbishment services across the United Kingdom</p>
-            <a href="contact.html" class="btn btn-primary" data-aos="fade-up" data-aos-delay="400">Request a Quote</a>
+            <h1 data-aos="fade-up">Bringing Colour, Craftsmanship,<br>and Class to Every Home.</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Professional Painters & Decorators in Brighton and Sussex</p>
+            <div class="hero-buttons" data-aos="fade-up" data-aos-delay="400">
+                <a href="quote.html" class="btn btn-primary">Get a Free Quote</a>
+                <a href="tel:+441273123456" class="btn btn-secondary">Call Now</a>
+            </div>
         </div>
     </section>
 
-    <!-- Introduction Section -->
+    <!-- About Preview Section -->
     <section class="intro-section">
         <div class="container">
             <div class="intro-content" data-aos="fade-up">
-                <h2>Welcome to Impact Decor Limited</h2>
-                <p>We are a premium construction company based in London, specializing in delivering exceptional results for residential and commercial projects. With years of experience and a commitment to excellence, we transform visions into reality.</p>
-                <p>Our team of skilled professionals brings expertise in construction, refurbishment, painting, interior design, and comprehensive project management. We pride ourselves on quality craftsmanship, attention to detail, and unwavering dedication to client satisfaction.</p>
+                <h2>Welcome to Impact Decor Ltd</h2>
+                <p>At Impact Decor Ltd, we bring over <strong>17 years of hands-on experience</strong> delivering excellence in transforming homes and spaces with precision, creativity, and care.</p>
+                <p>Founded on the principles of <strong>Innovation, Integrity, and Impact</strong>, we believe that every project deserves the highest level of craftsmanship and professionalism. From painting and decorating to refurbishment and maintenance, we enhance your space — and exceed your expectations.</p>
+                <a href="about.html" class="btn btn-outline">Learn More About Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview Section -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="text-center" data-aos="fade-up">Our Services</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Comprehensive painting, decorating, and property renovation services</p>
+            <div class="services-grid">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-icon">🎨</div>
+                    <h3>Interior & Exterior Painting</h3>
+                    <p>Professional painting services using premium materials for stunning, long-lasting finishes.</p>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-icon">📜</div>
+                    <h3>Wallpaper Installation</h3>
+                    <p>Expert wallpaper hanging with meticulous attention to pattern matching and seamless application.</p>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-icon">🚿</div>
+                    <h3>Domestic Plumbing</h3>
+                    <p>Reliable plumbing solutions for installations, repairs, and maintenance throughout your home.</p>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-icon">⬜</div>
+                    <h3>Tiling Services</h3>
+                    <p>Professional tiling for kitchens, bathrooms, and floors with precision and quality.</p>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-icon">🏛️</div>
+                    <h3>Coving & Moulding</h3>
+                    <p>Elegant decorative coving and moulding to add character and sophistication to your rooms.</p>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-icon">🔨</div>
+                    <h3>Surface Preparation</h3>
+                    <p>Expert surface preparation and plaster repair ensuring the perfect base for decorating.</p>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-icon">🪛</div>
+                    <h3>Carpentry & Fittings</h3>
+                    <p>Custom carpentry work and professional fitting services for all your woodwork needs.</p>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-icon">🏠</div>
+                    <h3>Property Maintenance</h3>
+                    <p>Comprehensive renovation and ongoing maintenance to keep your property in pristine condition.</p>
+                </div>
+            </div>
+            <div class="text-center mt-3" data-aos="fade-up">
+                <a href="services.html" class="btn btn-secondary">View All Services</a>
             </div>
         </div>
     </section>
@@ -69,69 +133,18 @@
     <!-- Recent Projects Preview -->
     <section class="recent-projects">
         <div class="container">
-            <h2 data-aos="fade-up">Recent Projects</h2>
-            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Showcasing our latest work</p>
+            <h2 class="text-center" data-aos="fade-up">Recent Projects</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Showcasing our latest work across Brighton and Sussex</p>
             
-            <!-- Images Section -->
-            <div class="projects-category">
-                <h3 data-aos="fade-up">Images</h3>
-                <div class="projects-grid" id="recent-images">
-                    <div class="loading">Loading recent projects...</div>
-                </div>
-                <div class="text-center" data-aos="fade-up">
-                    <a href="images.html" class="btn btn-secondary">View All Images</a>
+            <div class="projects-grid" id="recent-projects">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading recent projects...</p>
                 </div>
             </div>
-
-            <!-- Videos Section -->
-            <div class="projects-category">
-                <h3 data-aos="fade-up">Videos</h3>
-                <div class="projects-grid" id="recent-videos">
-                    <div class="loading">Loading recent videos...</div>
-                </div>
-                <div class="text-center" data-aos="fade-up">
-                    <a href="videos.html" class="btn btn-secondary">View All Videos</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="services-section">
-        <div class="container">
-            <h2 data-aos="fade-up">Our Services</h2>
-            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Comprehensive construction solutions</p>
-            <div class="services-grid">
-                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-icon">🏗️</div>
-                    <h3>Construction</h3>
-                    <p>New builds and extensions executed with precision and care, meeting all UK construction standards.</p>
-                </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-icon">🔧</div>
-                    <h3>Refurbishment</h3>
-                    <p>Complete property renovations that breathe new life into existing spaces with modern functionality.</p>
-                </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="service-icon">🎨</div>
-                    <h3>Painting & Decorating</h3>
-                    <p>Professional painting services using premium materials for flawless finishes.</p>
-                </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-icon">✨</div>
-                    <h3>Interior Design</h3>
-                    <p>Bespoke interior design solutions that blend aesthetics with functionality.</p>
-                </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-icon">📋</div>
-                    <h3>Project Management</h3>
-                    <p>End-to-end project coordination ensuring timely delivery and quality assurance.</p>
-                </div>
-                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="service-icon">🏡</div>
-                    <h3>Property Maintenance</h3>
-                    <p>Ongoing maintenance services to keep your property in pristine condition.</p>
-                </div>
+            
+            <div class="text-center mt-3" data-aos="fade-up">
+                <a href="gallery.html" class="btn btn-secondary">View Full Gallery</a>
             </div>
         </div>
     </section>
@@ -139,20 +152,27 @@
     <!-- Testimonials Section -->
     <section class="testimonials-section">
         <div class="container">
-            <h2 data-aos="fade-up">What Our Clients Say</h2>
+            <h2 class="text-center" data-aos="fade-up">What Our Clients Say</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Trusted by homeowners and landlords across Brighton and Sussex</p>
             <div class="testimonials-slider">
-                <div class="testimonial" data-aos="fade-up">
-                    <p class="testimonial-text">"Impact Decor transformed our home beyond expectations. Their attention to detail and professionalism was outstanding throughout the entire project."</p>
-                    <p class="testimonial-author">- Sarah Thompson, London</p>
-                </div>
                 <div class="testimonial" data-aos="fade-up" data-aos-delay="100">
-                    <p class="testimonial-text">"Exceptional service from start to finish. The team delivered on time and within budget. We couldn't be happier with our new office space."</p>
-                    <p class="testimonial-author">- James Mitchell, Manchester</p>
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"Absolutely outstanding service from Impact Decor. They transformed our dated living room into a stunning modern space. The attention to detail was impeccable and they completed everything on time and within budget."</p>
+                    <p class="testimonial-author">— Sarah Mitchell, Brighton</p>
                 </div>
                 <div class="testimonial" data-aos="fade-up" data-aos-delay="200">
-                    <p class="testimonial-text">"Professional, reliable, and skilled. Impact Decor handled our complex refurbishment with expertise and care. Highly recommended."</p>
-                    <p class="testimonial-author">- Emma Williams, Birmingham</p>
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"We've used Impact Decor for multiple properties and they never disappoint. Professional, reliable, and the quality of their work is exceptional. Highly recommend for any painting or decorating needs."</p>
+                    <p class="testimonial-author">— James Thompson, Hove</p>
                 </div>
+                <div class="testimonial" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"From initial consultation to final inspection, the team was fantastic. They worked around our schedule, kept everything clean and tidy, and the finished result exceeded our expectations. True professionals!"</p>
+                    <p class="testimonial-author">— Emma Roberts, Worthing</p>
+                </div>
+            </div>
+            <div class="text-center mt-3" data-aos="fade-up">
+                <a href="testimonials.html" class="btn btn-outline">Read More Reviews</a>
             </div>
         </div>
     </section>
@@ -161,9 +181,9 @@
     <section class="cta-section">
         <div class="container">
             <div class="cta-content" data-aos="fade-up">
-                <h2>Ready to Start Your Project?</h2>
-                <p>Get in touch with us today for a free consultation and quote</p>
-                <a href="contact.html" class="btn btn-primary">Request a Quote</a>
+                <h2>Transform Your Home Today</h2>
+                <p>Request a Free Quote — No Obligation</p>
+                <a href="quote.html" class="btn btn-primary">Request a Free Quote</a>
             </div>
         </div>
     </section>
@@ -173,39 +193,50 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-column">
-                    <h3>Impact Decor Limited</h3>
-                    <p>Building Excellence. Delivering Trust.</p>
+                    <h3>Impact Decor Ltd</h3>
+                    <p><strong>Innovation. Integrity. Impact.</strong></p>
+                    <p>Professional painters and decorators serving Brighton and Sussex with over 17 years of excellence.</p>
                 </div>
                 <div class="footer-column">
-                    <h4>Contact</h4>
-                    <p>London, United Kingdom</p>
-                    <p>Email: info@impactdecor.co.uk</p>
-                    <p>Phone: +44 20 1234 5678</p>
+                    <h4>Contact Us</h4>
+                    <p>📍 Brighton, East Sussex<br>United Kingdom</p>
+                    <p>📧 info@impactdecor.co.uk</p>
+                    <p>📞 +44 1273 123 456</p>
+                    <p>⏰ Mon-Fri: 8am-6pm<br>Sat: 9am-4pm</p>
                 </div>
                 <div class="footer-column">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="about.html">About</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
                         <li><a href="services.html">Services</a></li>
-                        <li><a href="projects.html">Projects</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="testimonials.html">Reviews</a></li>
                         <li><a href="contact.html">Contact</a></li>
+                        <li><a href="quote.html">Get a Quote</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h4>Follow Us</h4>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook">📘</a>
-                        <a href="#" aria-label="Instagram">📷</a>
-                        <a href="#" aria-label="LinkedIn">💼</a>
-                        <a href="#" aria-label="Twitter">🐦</a>
+                        <a href="#" aria-label="Facebook" title="Facebook">📘</a>
+                        <a href="#" aria-label="Instagram" title="Instagram">📷</a>
+                        <a href="#" aria-label="LinkedIn" title="LinkedIn">💼</a>
+                        <a href="#" aria-label="Twitter" title="Twitter">🐦</a>
                     </div>
+                    <p style="margin-top: 1.5rem;">Fully insured & qualified<br>NVQ & City & Guilds certified</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; <span id="current-year"></span> Impact Decor Limited. All rights reserved.</p>
+                <p>&copy; <span id="current-year"></span> Impact Decor Ltd. All rights reserved. Company registered in England and Wales.</p>
             </div>
         </div>
     </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/441273123456" class="whatsapp-float" target="_blank" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">
+        💬
+    </a>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
@@ -213,7 +244,11 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- AOS Animation Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom Scripts -->
     <script src="js/firebase-config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>

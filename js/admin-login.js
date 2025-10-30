@@ -1,111 +1,119 @@
 // Admin Login JavaScript
 
-const loginForm = document.getElementById('loginForm');
-const googleSignInBtn = document.getElementById('googleSignIn');
-const loginBtn = document.getElementById('loginBtn');
-const loginText = document.getElementById('loginText');
-const loginLoading = document.getElementById('loginLoading');
-const errorMessage = document.getElementById('errorMessage');
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is already logged in
+    if (auth) {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Redirect to dashboard if already logged in
+                window.location.href = 'admin-imdecltd.html';
+            }
+        });
+    }
+    
+    // Handle login form submission
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleEmailLogin);
+    }
+    
+    // Handle Google login
+    const googleBtn = document.getElementById('google-login-btn');
+    if (googleBtn) {
+        googleBtn.addEventListener('click', handleGoogleLogin);
+    }
+});
 
-// Check if user is already logged in
-if (auth) {
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            // User is signed in, redirect to dashboard
+// Handle Email/Password Login
+async function handleEmailLogin(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('login-btn');
+    const originalText = loginBtn.textContent;
+    
+    if (!email || !password) {
+        showToast('Please enter email and password', 'error');
+        return;
+    }
+    
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Signing in...';
+    
+    try {
+        if (!auth) {
+            throw new Error('Authentication not initialized');
+        }
+        
+        await auth.signInWithEmailAndPassword(email, password);
+        
+        showToast('Login successful!', 'success');
+        
+        // Redirect to dashboard
+        setTimeout(() => {
             window.location.href = 'admin-imdecltd.html';
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        
+        let errorMessage = 'Login failed. Please try again.';
+        
+        if (error.code === 'auth/user-not-found') {
+            errorMessage = 'No account found with this email.';
+        } else if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Incorrect password.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Invalid email address.';
+        } else if (error.code === 'auth/too-many-requests') {
+            errorMessage = 'Too many failed attempts. Please try again later.';
         }
-    });
+        
+        showToast(errorMessage, 'error');
+        
+        loginBtn.disabled = false;
+        loginBtn.textContent = originalText;
+    }
 }
 
-// Email/Password Login
-if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // Disable button
-        loginBtn.disabled = true;
-        loginText.style.display = 'none';
-        loginLoading.style.display = 'inline';
-        errorMessage.style.display = 'none';
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        try {
-            if (!auth) {
-                throw new Error('Authentication not initialized');
-            }
-
-            await auth.signInWithEmailAndPassword(email, password);
-            showToast('Login successful! Redirecting...', 'success');
-            
-            // Redirect after a short delay
-            setTimeout(() => {
-                window.location.href = 'admin-imdecltd.html';
-            }, 1000);
-
-        } catch (error) {
-            console.error('Login error:', error);
-            let errorMsg = 'Login failed. Please check your credentials.';
-            
-            switch (error.code) {
-                case 'auth/user-not-found':
-                    errorMsg = 'No account found with this email address.';
-                    break;
-                case 'auth/wrong-password':
-                    errorMsg = 'Incorrect password. Please try again.';
-                    break;
-                case 'auth/invalid-email':
-                    errorMsg = 'Invalid email address format.';
-                    break;
-                case 'auth/user-disabled':
-                    errorMsg = 'This account has been disabled.';
-                    break;
-                case 'auth/too-many-requests':
-                    errorMsg = 'Too many failed login attempts. Please try again later.';
-                    break;
-            }
-            
-            errorMessage.textContent = errorMsg;
-            errorMessage.style.display = 'block';
-
-            // Re-enable button
-            loginBtn.disabled = false;
-            loginText.style.display = 'inline';
-            loginLoading.style.display = 'none';
+// Handle Google Login
+async function handleGoogleLogin() {
+    const googleBtn = document.getElementById('google-login-btn');
+    const originalText = googleBtn.textContent;
+    
+    googleBtn.disabled = true;
+    googleBtn.textContent = 'Signing in with Google...';
+    
+    try {
+        if (!auth) {
+            throw new Error('Authentication not initialized');
         }
-    });
-}
-
-// Google Sign-In
-if (googleSignInBtn) {
-    googleSignInBtn.addEventListener('click', async () => {
-        try {
-            if (!auth) {
-                throw new Error('Authentication not initialized');
-            }
-
-            const provider = new firebase.auth.GoogleAuthProvider();
-            await auth.signInWithPopup(provider);
-            
-            showToast('Login successful! Redirecting...', 'success');
-            
-            setTimeout(() => {
-                window.location.href = 'admin-imdecltd.html';
-            }, 1000);
-
-        } catch (error) {
-            console.error('Google sign-in error:', error);
-            let errorMsg = 'Google sign-in failed. Please try again.';
-            
-            if (error.code === 'auth/popup-closed-by-user') {
-                errorMsg = 'Sign-in cancelled.';
-            } else if (error.code === 'auth/popup-blocked') {
-                errorMsg = 'Pop-up blocked. Please allow pop-ups for this site.';
-            }
-            
-            errorMessage.textContent = errorMsg;
-            errorMessage.style.display = 'block';
+        
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await auth.signInWithPopup(provider);
+        
+        showToast('Login successful!', 'success');
+        
+        // Redirect to dashboard
+        setTimeout(() => {
+            window.location.href = 'admin-imdecltd.html';
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Google login error:', error);
+        
+        let errorMessage = 'Google sign-in failed. Please try again.';
+        
+        if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Sign-in cancelled.';
+        } else if (error.code === 'auth/popup-blocked') {
+            errorMessage = 'Pop-up blocked. Please allow pop-ups for this site.';
         }
-    });
+        
+        showToast(errorMessage, 'error');
+        
+        googleBtn.disabled = false;
+        googleBtn.textContent = originalText;
+    }
 }
