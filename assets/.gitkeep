@@ -1,0 +1,28 @@
+# Assets Directory
+
+This directory contains static assets for the website:
+
+- **favicon.svg** - Website favicon (Impact Decor logo)
+- **hero-video.mp4** - (Add your hero video here - optional)
+- **logo.png** - (Add your company logo here)
+- Other images and media files
+
+## Recommended Assets to Add:
+
+1. **Company Logo** - Professional logo in PNG or SVG format
+2. **Hero Video** - Background video for homepage (MP4 format, optimized for web)
+3. **Team Photos** - Images for the About page team section
+4. **Sample Project Images** - Initial portfolio images before admin uploads
+
+## Image Guidelines:
+
+- **Format**: JPG for photos, PNG for graphics with transparency, SVG for logos
+- **Optimization**: Compress images before uploading to reduce file size
+- **Dimensions**: 
+  - Hero video: 1920x1080 or higher
+  - Project images: At least 1200px width
+  - Thumbnails: 400x300px recommended
+  
+## Note:
+
+The main project images and videos will be uploaded through the admin dashboard and stored in Cloudinary. These assets folder files are for static resources that are part of the website template.

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Impact Decor Limited services - Construction, refurbishment, painting, interior design, and project management across the UK.">
+    <meta property="og:title" content="Our Services - Impact Decor Limited">
+    <meta property="og:description" content="Comprehensive construction solutions for residential and commercial projects.">
+    <meta property="og:type" content="website">
+    <title>Services - Impact Decor Limited</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="logo">
+                    <span class="logo-text">Impact Decor</span>
+                    <span class="logo-subtitle">Limited</span>
+                </a>
+                <button class="mobile-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html" class="active">Services</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 data-aos="fade-up">Our Services</h1>
+            <p data-aos="fade-up" data-aos-delay="100">Comprehensive construction solutions tailored to your needs</p>
+        </div>
+    </section>
+
+    <!-- Services Detail Section -->
+    <section class="services-detail-section">
+        <div class="container">
+            <!-- Construction -->
+            <div class="service-detail" data-aos="fade-up">
+                <div class="service-detail-content">
+                    <div class="service-detail-icon">🏗️</div>
+                    <h2>Construction</h2>
+                    <p>We deliver comprehensive construction services for both residential and commercial projects throughout the United Kingdom. Our experienced team manages every aspect of the build process, from groundwork to final touches.</p>
+                    <ul class="service-features">
+                        <li>New builds and property extensions</li>
+                        <li>Structural alterations and conversions</li>
+                        <li>Foundation and groundwork</li>
+                        <li>Roofing and exterior finishing</li>
+                        <li>Full project management and coordination</li>
+                        <li>Compliance with all UK building regulations</li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="openServiceModal('construction')">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Refurbishment -->
+            <div class="service-detail" data-aos="fade-up">
+                <div class="service-detail-content">
+                    <div class="service-detail-icon">🔧</div>
+                    <h2>Refurbishment</h2>
+                    <p>Transform your existing space with our expert refurbishment services. We breathe new life into properties, combining modern functionality with aesthetic appeal while respecting the character of your building.</p>
+                    <ul class="service-features">
+                        <li>Complete property renovations</li>
+                        <li>Kitchen and bathroom refurbishments</li>
+                        <li>Period property restoration</li>
+                        <li>Commercial space upgrades</li>
+                        <li>Energy efficiency improvements</li>
+                        <li>Listed building expertise</li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="openServiceModal('refurbishment')">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Painting & Decorating -->
+            <div class="service-detail" data-aos="fade-up">
+                <div class="service-detail-content">
+                    <div class="service-detail-icon">🎨</div>
+                    <h2>Painting & Decorating</h2>
+                    <p>Our professional painting and decorating services use premium materials and expert techniques to deliver flawless finishes. We handle projects of all sizes, from single rooms to entire buildings.</p>
+                    <ul class="service-features">
+                        <li>Interior and exterior painting</li>
+                        <li>Wallpaper hanging and removal</li>
+                        <li>Decorative finishes and effects</li>
+                        <li>Commercial and residential projects</li>
+                        <li>Surface preparation and restoration</li>
+                        <li>Eco-friendly paint options</li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="openServiceModal('painting')">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Interior Design -->
+            <div class="service-detail" data-aos="fade-up">
+                <div class="service-detail-content">
+                    <div class="service-detail-icon">✨</div>
+                    <h2>Interior Design</h2>
+                    <p>Create stunning interiors that reflect your style and meet your needs. Our interior design team combines creativity with practical expertise to deliver spaces that are both beautiful and functional.</p>
+                    <ul class="service-features">
+                        <li>Space planning and layout design</li>
+                        <li>Colour scheme consultation</li>
+                        <li>Furniture and fixture selection</li>
+                        <li>Lighting design</li>
+                        <li>Bespoke joinery and carpentry</li>
+                        <li>3D visualization and renders</li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="openServiceModal('interior')">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Project Management -->
+            <div class="service-detail" data-aos="fade-up">
+                <div class="service-detail-content">
+                    <div class="service-detail-icon">📋</div>
+                    <h2>Project Management</h2>
+                    <p>Comprehensive project management ensures your construction project runs smoothly from concept to completion. We coordinate all aspects, manage timelines, and maintain quality standards throughout.</p>
+                    <ul class="service-features">
+                        <li>Full project planning and scheduling</li>
+                        <li>Budget management and cost control</li>
+                        <li>Contractor coordination and supervision</li>
+                        <li>Quality assurance and inspections</li>
+                        <li>Regular progress reporting</li>
+                        <li>Health and safety management</li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="openServiceModal('management')">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Property Maintenance -->
+            <div class="service-detail" data-aos="fade-up">
+                <div class="service-detail-content">
+                    <div class="service-detail-icon">🏡</div>
+                    <h2>Property Maintenance</h2>
+                    <p>Keep your property in excellent condition with our ongoing maintenance services. From routine repairs to emergency callouts, we provide reliable support to protect your investment.</p>
+                    <ul class="service-features">
+                        <li>Routine maintenance and inspections</li>
+                        <li>Emergency repair services</li>
+                        <li>Plumbing and electrical work</li>
+                        <li>Seasonal property care</li>
+                        <li>Preventive maintenance programs</li>
+                        <li>Multi-property management support</li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="openServiceModal('maintenance')">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content" data-aos="fade-up">
+                <h2>Ready to Discuss Your Project?</h2>
+                <p>Contact us for a free consultation and detailed quote</p>
+                <a href="contact.html" class="btn btn-primary">Request a Quote</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Impact Decor Limited</h3>
+                    <p>Building Excellence. Delivering Trust.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <p>London, United Kingdom</p>
+                    <p>Email: info@impactdecor.co.uk</p>
+                    <p>Phone: +44 20 1234 5678</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                        <a href="#" aria-label="LinkedIn">💼</a>
+                        <a href="#" aria-label="Twitter">🐦</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year"></span> Impact Decor Limited. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/services.js"></script>
+</body>
+</html>
