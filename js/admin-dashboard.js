@@ -110,11 +110,13 @@ async function handleMediaUpload(e, type) {
     try {
         // Upload to Cloudinary
         const formData = new FormData();
+        const resourceType = type === 'video' ? 'video' : 'image';
+        const uploadPreset = getCloudinaryUploadPreset(resourceType);
+        
         formData.append('file', file);
-        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+        formData.append('upload_preset', uploadPreset);
         formData.append('folder', `impact-decor/${type}s`);
         
-        const resourceType = type === 'video' ? 'video' : 'image';
         const response = await fetch(`${CLOUDINARY_API_URL}/${resourceType}/upload`, {
             method: 'POST',
             body: formData

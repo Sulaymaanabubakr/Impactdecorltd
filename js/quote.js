@@ -72,7 +72,7 @@ async function uploadPhotos(files) {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            formData.append('upload_preset', getCloudinaryUploadPreset('image'));
             formData.append('folder', 'quotes');
             
             const response = await fetch(`${CLOUDINARY_API_URL}/image/upload`, {
