@@ -22,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize contact page animations
     initContactPageAnimations();
+    
+    // Initialize expertise section animations
+    initExpertiseAnimations();
+    
+    // Initialize enhanced nav animations
+    initNavAnimations();
 });
 
 // ===== Preloader Animation =====
@@ -546,4 +552,78 @@ function initContactPageAnimations() {
             });
         }
     });
+}
+
+// ===== Expertise Section Animations =====
+function initExpertiseAnimations() {
+    // Animate expertise list items alternately from sides
+    const expertiseItems = document.querySelectorAll('.intro-content ul li');
+    
+    expertiseItems.forEach((item, index) => {
+        const direction = index % 2 === 0 ? -60 : 60;
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.from(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                x: direction,
+                duration: 0.7,
+                delay: index * 0.1,
+                ease: 'power2.out'
+            });
+        }
+    });
+    
+    // Animate "Why Choose" checklist items
+    const whyChooseItems = document.querySelectorAll('[style*="border-bottom"] h4, [style*="border-bottom"] + p');
+    
+    whyChooseItems.forEach((item, index) => {
+        if (typeof gsap !== 'undefined') {
+            gsap.from(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 88%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                x: index % 2 === 0 ? -40 : 40,
+                duration: 0.6,
+                delay: (index % 6) * 0.08,
+                ease: 'power2.out'
+            });
+        }
+    });
+}
+
+// ===== Enhanced Navigation Animations =====
+function initNavAnimations() {
+    const navbar = document.querySelector('.navbar');
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    
+    // Add stagger animation to nav links on page load
+    if (typeof gsap !== 'undefined' && navLinks.length > 0) {
+        gsap.from(navLinks, {
+            opacity: 0,
+            y: -20,
+            stagger: 0.05,
+            duration: 0.5,
+            delay: 0.3,
+            ease: 'power2.out'
+        });
+    }
+    
+    // Add smooth scale animation to logo on page load
+    const logo = document.querySelector('.logo');
+    if (logo && typeof gsap !== 'undefined') {
+        gsap.from(logo, {
+            opacity: 0,
+            scale: 0.9,
+            duration: 0.6,
+            ease: 'back.out(1.5)'
+        });
+    }
 }

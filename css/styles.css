@@ -1081,6 +1081,11 @@ body {
 .navbar {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.98);
 }
 
 /* Hero image zoom effect support */
@@ -1120,6 +1125,118 @@ img[loading="lazy"] {
 
 img[loading="lazy"].loaded {
     opacity: 1;
+}
+
+/* Enhanced navigation link hover */
+.nav-menu a:not(.btn) {
+    position: relative;
+}
+
+.nav-menu a:not(.btn)::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 50%;
+    background: linear-gradient(90deg, transparent, var(--sun-flare), transparent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-menu a:not(.btn):hover::before {
+    width: 100%;
+}
+
+/* CTA section enhanced styling */
+.cta-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #1E2A38 0%, #2A3A4C 100%);
+    z-index: 0;
+}
+
+.cta-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Project card image overlay effect */
+.project-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(30, 42, 56, 0.7) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.project-card:hover::after {
+    opacity: 1;
+}
+
+/* Testimonial card enhanced style */
+.testimonial {
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial::before {
+    content: '"';
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    font-size: 120px;
+    color: rgba(201, 162, 39, 0.1);
+    font-family: Georgia, serif;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Enhanced form focus effects */
+.form-group {
+    position: relative;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--sun-flare);
+    box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.15);
+}
+
+/* Section divider animation */
+.section-subtitle::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--sun-flare);
+    margin: 1rem auto 0;
+    border-radius: 2px;
+    animation: expandWidth 1s ease-out;
+}
+
+@keyframes expandWidth {
+    from {
+        width: 0;
+    }
+    to {
+        width: 60px;
+    }
 }
 
 /* ===== Accessibility ===== */
