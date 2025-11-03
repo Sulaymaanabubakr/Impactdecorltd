@@ -399,7 +399,7 @@ section {
 
 .service-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 8px 24px rgba(30, 42, 56, 0.25);
+    box-shadow: 0 12px 32px rgba(30, 42, 56, 0.3), 0 0 0 2px #C9A227;
 }
 
 .service-image {
@@ -612,7 +612,7 @@ section {
 .social-links {
     display: flex;
     gap: 1rem;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
 }
 
 .social-links a:hover {
