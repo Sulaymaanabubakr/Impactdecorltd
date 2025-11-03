@@ -4,10 +4,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof AOS !== 'undefined') {
         AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
+            duration: 1000,
+            easing: 'ease-out',
             once: true,
-            offset: 100
+            offset: 120,
+            delay: 0
         });
     }
     
