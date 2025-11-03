@@ -5,18 +5,21 @@ let deleteItemId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
-    if (auth) {
+    if (auth && db) {
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
+                console.log('User authenticated:', user.email);
                 initDashboard();
             } else {
+                console.log('User not authenticated, redirecting to login');
                 // Redirect to login
                 window.location.href = 'admin-login.html';
             }
         });
     } else {
-        showToast('Authentication not available', 'error');
+        console.error('Firebase services not initialized properly');
+        showToast('Firebase services not available', 'error');
         setTimeout(() => {
             window.location.href = 'admin-login.html';
         }, 2000);
@@ -128,6 +131,11 @@ async function handleMediaUpload(e, type) {
         
         const data = await response.json();
         
+        // Check if user is authenticated before saving
+        if (!currentUser) {
+            throw new Error('User not authenticated');
+        }
+        
         // Save metadata to Firestore
         await db.collection('media').add({
             type: type,
@@ -163,6 +171,11 @@ async function loadMediaList(type) {
     const mediaType = type === 'images' ? 'image' : 'video';
     
     try {
+        // Check if user is authenticated
+        if (!currentUser) {
+            throw new Error('User not authenticated');
+        }
+        
         const snapshot = await db.collection('media')
             .where('type', '==', mediaType)
             .orderBy('uploadedAt', 'desc')
@@ -183,7 +196,12 @@ async function loadMediaList(type) {
         
     } catch (error) {
         console.error('Error loading media:', error);
-        listContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Error loading items.</p>';
+        if (error.code === 'permission-denied') {
+            listContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Permission denied. Please check Firestore security rules.</p>';
+            showToast('Permission denied. Please contact administrator.', 'error');
+        } else {
+            listContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Error loading items.</p>';
+        }
     }
 }
 
