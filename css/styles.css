@@ -865,23 +865,33 @@ section {
         flex-direction: column;
         gap: 0;
         box-shadow: var(--shadow-lg);
-        padding: 1rem 0;
+        padding: 0.5rem 0;
         border-radius: 12px;
         opacity: 0;
         transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+        visibility: hidden;
     }
     
     .nav-menu.active {
         display: flex;
         opacity: 1;
         transform: translateY(0);
-        animation: fadeInDown 0.3s ease;
+        visibility: visible;
+        animation: fadeInDown 0.4s ease;
+    }
+    
+    .nav-menu li {
+        text-align: center;
     }
     
     .nav-menu a {
-        padding: 0.875rem 1.5rem;
+        display: block;
+        padding: 0.75rem 1rem;
         transition: var(--transition-smooth);
+        text-align: center;
+        font-size: 1rem;
+        line-height: 1.5;
     }
     
     .nav-menu a:hover {
@@ -889,6 +899,33 @@ section {
         /* OLD: rgba(255, 209, 102, 0.1) */
         background: rgba(201, 162, 39, 0.1);
         color: var(--deep-royal-blue);
+    }
+    
+    /* Normalize button styles in mobile menu */
+    /* Higher specificity to override .btn and .btn-primary without !important where possible */
+    .nav-menu li a.btn,
+    .nav-menu li a.btn-primary {
+        /* !important is required ONLY for properties with inline styles in HTML (style="padding: 0.5rem 1.5rem; font-size: 0.9rem;")
+           Inline styles have higher specificity than any selector, so !important is the only way to override them.
+           All other properties use natural specificity from the .nav-menu li a.btn selector chain. */
+        padding: 0.75rem 1rem !important;
+        font-size: 1rem !important;
+        /* These can override without !important due to higher specificity */
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+        color: var(--text-dark);
+        display: block;
+        width: 100%;
+        letter-spacing: 0;
+    }
+    
+    .nav-menu li a.btn:hover,
+    .nav-menu li a.btn-primary:hover {
+        background: rgba(201, 162, 39, 0.1);
+        color: var(--deep-royal-blue);
+        transform: none;
+        box-shadow: none;
     }
     
     .nav-menu a::after {
