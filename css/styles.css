@@ -1074,3 +1074,83 @@ select:focus {
     outline: 3px solid var(--sun-flare);
     outline-offset: 2px;
 }
+
+/* ===== Page Content Images ===== */
+.intro-section img {
+    transition: transform 0.9s ease-out;
+}
+
+.intro-section img:hover {
+    transform: scale(1.05);
+}
+
+/* ===== WhatsApp Gallery Section ===== */
+.whatsapp-gallery-section {
+    padding: 5rem 0;
+    background: var(--warm-grey);
+}
+
+.whatsapp-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.whatsapp-gallery-item {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all 0.7s ease-out;
+    background: var(--pure-white);
+    cursor: pointer;
+}
+
+.whatsapp-gallery-item:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.whatsapp-gallery-item img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    transition: transform 0.9s ease-out;
+    display: block;
+}
+
+.whatsapp-gallery-item:hover img {
+    transform: scale(1.08);
+}
+
+/* Loading state */
+.whatsapp-gallery-grid .loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-light);
+}
+
+/* Responsive adjustments for WhatsApp Gallery */
+@media (max-width: 768px) {
+    .whatsapp-gallery-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .whatsapp-gallery-item img {
+        height: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .whatsapp-gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .whatsapp-gallery-item img {
+        height: 250px;
+    }
+}
