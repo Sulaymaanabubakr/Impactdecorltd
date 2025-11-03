@@ -902,18 +902,24 @@ section {
     }
     
     /* Normalize button styles in mobile menu */
-    .nav-menu .btn {
+    /* Higher specificity to override .btn and .btn-primary without !important where possible */
+    .nav-menu li a.btn,
+    .nav-menu li a.btn-primary {
+        /* Need !important only for properties with inline styles in HTML */
         padding: 0.75rem 1rem !important;
         font-size: 1rem !important;
+        /* These can override without !important due to higher specificity */
         border-radius: 0;
         box-shadow: none;
         background: transparent;
         color: var(--text-dark);
         display: block;
         width: 100%;
+        letter-spacing: 0;
     }
     
-    .nav-menu .btn:hover {
+    .nav-menu li a.btn:hover,
+    .nav-menu li a.btn-primary:hover {
         background: rgba(201, 162, 39, 0.1);
         color: var(--deep-royal-blue);
         transform: none;
