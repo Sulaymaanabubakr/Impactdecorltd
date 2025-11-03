@@ -998,8 +998,8 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Add subtle animations to images on load */
-img {
+/* Add subtle animations to service images on load */
+.service-image {
     animation: imageLoad 0.8s ease-out;
 }
 
