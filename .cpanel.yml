@@ -8,8 +8,8 @@ deployment:
     - /bin/rm -rf ${DEPLOYPATH}*
 
     # 3️⃣ Copy all new files from the repo into the live website folder
-    - /bin/cp -R * $DEPLOYPATH
+    - /bin/cp -R * ${DEPLOYPATH}
 
     # 4️⃣ Optional: Set correct permissions (helps prevent 403 errors)
-    - /bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
-    - /bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
+    - /bin/find ${DEPLOYPATH} -type d -exec chmod 755 {} \;
+    - /bin/find ${DEPLOYPATH} -type f -exec chmod 644 {} \;
