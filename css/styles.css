@@ -905,7 +905,9 @@ section {
     /* Higher specificity to override .btn and .btn-primary without !important where possible */
     .nav-menu li a.btn,
     .nav-menu li a.btn-primary {
-        /* Need !important only for properties with inline styles in HTML */
+        /* !important is required ONLY for properties with inline styles in HTML (style="padding: 0.5rem 1.5rem; font-size: 0.9rem;")
+           Inline styles have higher specificity than any selector, so !important is the only way to override them.
+           All other properties use natural specificity from the .nav-menu li a.btn selector chain. */
         padding: 0.75rem 1rem !important;
         font-size: 1rem !important;
         /* These can override without !important due to higher specificity */
