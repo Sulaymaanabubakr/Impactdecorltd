@@ -88,6 +88,7 @@
         <div class="container">
             <h2 class="text-center" data-aos="fade-up">Let Our Works Speak For Us</h2>
             <p class="section-subtitle text-center" data-aos="fade-up" data-aos-delay="100">Recent transformations that showcase our craftsmanship</p>
+            <p class="gallery-instruction text-center" data-aos="fade-up" data-aos-delay="150">Tap or click any image to open the gallery, then swipe or use the arrows to browse.</p>
             <div class="whatsapp-gallery-grid" id="whatsapp-gallery">
                 <!-- WhatsApp images will be loaded here dynamically -->
                 <div class="loading">
@@ -277,6 +278,24 @@
     <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top" title="Scroll to top">
         <i class="ri-arrow-up-line"></i>
     </button>
+
+    <!-- Gallery Lightbox -->
+    <div class="gallery-lightbox" id="gallery-lightbox" aria-hidden="true">
+        <button class="gallery-lightbox-close" id="gallery-lightbox-close" aria-label="Close gallery">
+            <i class="ri-close-line"></i>
+        </button>
+        <button class="gallery-lightbox-nav prev" id="gallery-lightbox-prev" aria-label="Previous image">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <div class="gallery-lightbox-content">
+            <img id="gallery-lightbox-image" src="" alt="Impact Decor gallery item">
+            <p id="gallery-lightbox-caption" class="gallery-lightbox-caption"></p>
+            <span class="gallery-lightbox-hint">Swipe or use the arrows to view more projects.</span>
+        </div>
+        <button class="gallery-lightbox-nav next" id="gallery-lightbox-next" aria-label="Next image">
+            <i class="ri-arrow-right-s-line"></i>
+        </button>
+    </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>

@@ -1,5 +1,42 @@
 // Main JavaScript for Impact Decor Ltd Website
 
+// Gallery assets and state
+const whatsappGalleryAssets = [
+    'WhatsApp Image 2025-11-02 at 11.38.42 PM.jpeg',
+    'WhatsApp Image 2025-11-02 at 11.39.22 PM (1).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.39.22 PM (2).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.39.22 PM (3).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.39.22 PM (4).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.39.22 PM.jpeg',
+    'WhatsApp Image 2025-11-02 at 11.39.23 PM.jpeg',
+    'WhatsApp Image 2025-11-02 at 11.41.28 PM.jpeg',
+    'WhatsApp Image 2025-11-02 at 11.42.36 PM (1).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.42.36 PM (2).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.42.36 PM.jpeg',
+    'WhatsApp Image 2025-11-02 at 11.43.09 PM (1).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.43.09 PM.jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (1).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (2).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (3).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (4).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (5).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (6).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (7).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM (8).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.32 PM.jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.59 PM (1).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.59 PM (2).jpeg',
+    'WhatsApp Image 2025-11-02 at 11.44.59 PM.jpeg'
+];
+
+let galleryImages = [];
+let currentGalleryIndex = 0;
+let galleryLightboxElement = null;
+let galleryLightboxImage = null;
+let galleryLightboxCaption = null;
+let galleryTouchStartX = 0;
+let lastFocusedGalleryTrigger = null;
+
 // Initialize AOS (Animate On Scroll)
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof AOS !== 'undefined') {
@@ -20,6 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize scroll-to-top button
     initScrollToTop();
+    
+    // Prepare gallery lightbox
+    initGalleryLightbox();
     
     // Load recent projects on homepage
     if (document.getElementById('recent-projects')) {
@@ -200,56 +240,132 @@ function loadWhatsAppGallery() {
     const galleryContainer = document.getElementById('whatsapp-gallery');
     if (!galleryContainer) return;
     
-    // All actual WhatsApp images from assets folder (excluding favicon)
-    const assetsImages = [
-        'WhatsApp Image 2025-11-02 at 11.38.42 PM.jpeg',
-        'WhatsApp Image 2025-11-02 at 11.39.22 PM (1).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.39.22 PM (2).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.39.22 PM (3).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.39.22 PM (4).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.39.22 PM.jpeg',
-        'WhatsApp Image 2025-11-02 at 11.39.23 PM.jpeg',
-        'WhatsApp Image 2025-11-02 at 11.41.28 PM.jpeg',
-        'WhatsApp Image 2025-11-02 at 11.42.36 PM (1).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.42.36 PM (2).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.42.36 PM.jpeg',
-        'WhatsApp Image 2025-11-02 at 11.43.09 PM (1).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.43.09 PM.jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (1).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (2).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (3).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (4).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (5).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (6).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (7).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM (8).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.32 PM.jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.59 PM (1).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.59 PM (2).jpeg',
-        'WhatsApp Image 2025-11-02 at 11.44.59 PM.jpeg'
-    ];
+    galleryImages = whatsappGalleryAssets.map((imageName, index) => ({
+        src: `assets/${imageName}`,
+        alt: `Impact Decor project ${index + 1}`
+    }));
     
     // Clear loading state
     galleryContainer.innerHTML = '';
     
-    // Render all images from assets folder
-    assetsImages.forEach((imageName, index) => {
+    galleryImages.forEach((item, index) => {
         const galleryItem = document.createElement('div');
         galleryItem.className = 'whatsapp-gallery-item';
         galleryItem.setAttribute('data-aos', 'fade-up');
-        galleryItem.setAttribute('data-aos-delay', (index * 50).toString());
+        galleryItem.setAttribute('data-aos-delay', (index * 40).toString());
+        galleryItem.setAttribute('role', 'button');
+        galleryItem.setAttribute('tabindex', '0');
+        galleryItem.setAttribute('aria-label', `Open project image ${index + 1}`);
         
         const img = document.createElement('img');
-        img.src = `assets/${imageName}`;
-        img.alt = `Impact Decor project ${index + 1}`;
+        img.src = item.src;
+        img.alt = item.alt;
         img.loading = 'lazy';
         
         galleryItem.appendChild(img);
         galleryContainer.appendChild(galleryItem);
+        
+        galleryItem.addEventListener('click', () => openGalleryLightbox(index));
+        galleryItem.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openGalleryLightbox(index);
+            }
+        });
     });
     
-    // Re-initialize AOS for new elements
     if (typeof AOS !== 'undefined') {
         AOS.refresh();
+    }
+}
+
+function initGalleryLightbox() {
+    galleryLightboxElement = document.getElementById('gallery-lightbox');
+    if (!galleryLightboxElement) return;
+    
+    galleryLightboxImage = document.getElementById('gallery-lightbox-image');
+    galleryLightboxCaption = document.getElementById('gallery-lightbox-caption');
+    const closeBtn = document.getElementById('gallery-lightbox-close');
+    const prevBtn = document.getElementById('gallery-lightbox-prev');
+    const nextBtn = document.getElementById('gallery-lightbox-next');
+    const content = galleryLightboxElement.querySelector('.gallery-lightbox-content');
+    
+    closeBtn?.addEventListener('click', closeGalleryLightbox);
+    prevBtn?.addEventListener('click', () => handleGalleryNavigation(-1));
+    nextBtn?.addEventListener('click', () => handleGalleryNavigation(1));
+    
+    galleryLightboxElement.addEventListener('click', (event) => {
+        if (event.target === galleryLightboxElement) {
+            closeGalleryLightbox();
+        }
+    });
+    
+    if (content) {
+        content.addEventListener('touchstart', handleGalleryTouchStart, { passive: true });
+        content.addEventListener('touchend', handleGalleryTouchEnd, { passive: true });
+    }
+    
+    document.addEventListener('keydown', (event) => {
+        if (!galleryLightboxElement.classList.contains('open')) return;
+        if (event.key === 'Escape') {
+            closeGalleryLightbox();
+        } else if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            handleGalleryNavigation(-1);
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            handleGalleryNavigation(1);
+        }
+    });
+}
+
+function openGalleryLightbox(index) {
+    if (!galleryLightboxElement) return;
+    lastFocusedGalleryTrigger = document.activeElement;
+    currentGalleryIndex = index;
+    showGalleryImage(currentGalleryIndex);
+    galleryLightboxElement.classList.add('open');
+    galleryLightboxElement.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    const closeBtn = document.getElementById('gallery-lightbox-close');
+    closeBtn?.focus();
+}
+
+function closeGalleryLightbox() {
+    if (!galleryLightboxElement) return;
+    galleryLightboxElement.classList.remove('open');
+    galleryLightboxElement.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastFocusedGalleryTrigger && typeof lastFocusedGalleryTrigger.focus === 'function') {
+        lastFocusedGalleryTrigger.focus();
+    }
+}
+
+function showGalleryImage(index) {
+    if (!galleryImages.length || !galleryLightboxImage) return;
+    const item = galleryImages[index];
+    if (!item) return;
+    galleryLightboxImage.src = item.src;
+    galleryLightboxImage.alt = item.alt;
+    if (galleryLightboxCaption) {
+        galleryLightboxCaption.textContent = `${item.alt} (${index + 1} of ${galleryImages.length})`;
+    }
+}
+
+function handleGalleryNavigation(direction) {
+    if (!galleryImages.length) return;
+    currentGalleryIndex = (currentGalleryIndex + direction + galleryImages.length) % galleryImages.length;
+    showGalleryImage(currentGalleryIndex);
+}
+
+function handleGalleryTouchStart(event) {
+    galleryTouchStartX = event.changedTouches[0]?.screenX ?? 0;
+}
+
+function handleGalleryTouchEnd(event) {
+    const touchEndX = event.changedTouches[0]?.screenX ?? 0;
+    const deltaX = touchEndX - galleryTouchStartX;
+    if (Math.abs(deltaX) > 40) {
+        handleGalleryNavigation(deltaX < 0 ? 1 : -1);
     }
 }
