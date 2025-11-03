@@ -434,6 +434,8 @@ section {
 .service-icon {
     font-size: 4rem;
     margin-bottom: 1.5rem;
+    text-align: center;
+    display: block;
 }
 
 .service-card h3 {
@@ -1152,5 +1154,39 @@ select:focus {
     
     .whatsapp-gallery-item img {
         height: 250px;
+    }
+}
+
+/* Mobile centering for all pages */
+@media (max-width: 768px) {
+    /* Center all headings on mobile */
+    h1, h2, h3, h4, h5, h6 {
+        text-align: center;
+    }
+    
+    /* Center section subtitles and descriptions on mobile */
+    .section-subtitle,
+    .intro-content p,
+    .service-content p {
+        text-align: center;
+    }
+    
+    /* Ensure service cards content is centered on mobile */
+    .service-card {
+        text-align: center;
+    }
+    
+    .service-card img {
+        margin: 0 auto;
+    }
+    
+    /* Center images in About page on mobile */
+    .intro-section img {
+        margin: 0 auto;
+    }
+    
+    /* Center gallery items on mobile */
+    .whatsapp-gallery-item {
+        margin: 0 auto;
     }
 }

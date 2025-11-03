@@ -200,104 +200,56 @@ function loadWhatsAppGallery() {
     const galleryContainer = document.getElementById('whatsapp-gallery');
     if (!galleryContainer) return;
     
-    // Define WhatsApp images that may exist in the assets folder
-    // These will be automatically loaded when files are added to /assets/
-    const whatsappImages = [
-        'Whatsapp1.jpg',
-        'Whatsapp2.jpg',
-        'Whatsapp3.jpg',
-        'Whatsapp4.jpg',
-        'Whatsapp5.jpg',
-        'Whatsapp6.jpg',
-        'Whatsapp7.jpg',
-        'Whatsapp8.jpg',
-        'Whatsapp9.jpg',
-        'Whatsapp10.jpg'
-    ];
-    
-    // Use placeholder images from Unsplash for demonstration
-    // These showcase Impact Decor's types of work: painting, decorating, renovations
-    const placeholderImages = [
-        {
-            url: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80',
-            alt: 'Professional interior painting'
-        },
-        {
-            url: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80',
-            alt: 'Wall decoration and painting'
-        },
-        {
-            url: 'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&q=80',
-            alt: 'Home renovation work'
-        },
-        {
-            url: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80',
-            alt: 'Plastering and wall preparation'
-        },
-        {
-            url: 'https://images.unsplash.com/photo-1604709177225-055f99402ea3?w=800&q=80',
-            alt: 'Tiling work'
-        },
-        {
-            url: 'https://images.unsplash.com/photo-1590490200097-6b37d8a7319d?w=800&q=80',
-            alt: 'Interior decorating'
-        }
+    // All actual WhatsApp images from assets folder (excluding favicon)
+    const assetsImages = [
+        'WhatsApp Image 2025-11-02 at 11.38.42 PM.jpeg',
+        'WhatsApp Image 2025-11-02 at 11.39.22 PM (1).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.39.22 PM (2).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.39.22 PM (3).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.39.22 PM (4).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.39.22 PM.jpeg',
+        'WhatsApp Image 2025-11-02 at 11.39.23 PM.jpeg',
+        'WhatsApp Image 2025-11-02 at 11.41.28 PM.jpeg',
+        'WhatsApp Image 2025-11-02 at 11.42.36 PM (1).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.42.36 PM (2).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.42.36 PM.jpeg',
+        'WhatsApp Image 2025-11-02 at 11.43.09 PM (1).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.43.09 PM.jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (1).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (2).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (3).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (4).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (5).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (6).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (7).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM (8).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.32 PM.jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.59 PM (1).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.59 PM (2).jpeg',
+        'WhatsApp Image 2025-11-02 at 11.44.59 PM.jpeg'
     ];
     
     // Clear loading state
     galleryContainer.innerHTML = '';
     
-    // Check if WhatsApp images exist, otherwise use placeholders
-    let imagesToLoad = [];
-    let loadedCount = 0;
-    let totalImages = whatsappImages.length;
-    
-    // Try to load WhatsApp images first
-    whatsappImages.forEach((imageName, index) => {
-        const img = new Image();
-        img.onload = function() {
-            imagesToLoad.push({
-                url: `assets/${imageName}`,
-                alt: `Project showcase ${index + 1}`
-            });
-            loadedCount++;
-            if (loadedCount === totalImages) {
-                renderGallery(imagesToLoad.length > 0 ? imagesToLoad : placeholderImages);
-            }
-        };
-        img.onerror = function() {
-            loadedCount++;
-            if (loadedCount === totalImages) {
-                renderGallery(imagesToLoad.length > 0 ? imagesToLoad : placeholderImages);
-            }
-        };
+    // Render all images from assets folder
+    assetsImages.forEach((imageName, index) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'whatsapp-gallery-item';
+        galleryItem.setAttribute('data-aos', 'fade-up');
+        galleryItem.setAttribute('data-aos-delay', (index * 50).toString());
+        
+        const img = document.createElement('img');
         img.src = `assets/${imageName}`;
+        img.alt = `Impact Decor project ${index + 1}`;
+        img.loading = 'lazy';
+        
+        galleryItem.appendChild(img);
+        galleryContainer.appendChild(galleryItem);
     });
     
-    function renderGallery(images) {
-        if (images.length === 0) {
-            galleryContainer.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No images available.</p>';
-            return;
-        }
-        
-        images.forEach((image, index) => {
-            const galleryItem = document.createElement('div');
-            galleryItem.className = 'whatsapp-gallery-item';
-            galleryItem.setAttribute('data-aos', 'fade-up');
-            galleryItem.setAttribute('data-aos-delay', (index * 100).toString());
-            
-            const img = document.createElement('img');
-            img.src = image.url;
-            img.alt = image.alt;
-            img.loading = 'lazy';
-            
-            galleryItem.appendChild(img);
-            galleryContainer.appendChild(galleryItem);
-        });
-        
-        // Re-initialize AOS for new elements
-        if (typeof AOS !== 'undefined') {
-            AOS.refresh();
-        }
+    // Re-initialize AOS for new elements
+    if (typeof AOS !== 'undefined') {
+        AOS.refresh();
     }
 }
