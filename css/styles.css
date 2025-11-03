@@ -628,6 +628,14 @@ section {
     color: var(--sun-flare);
 }
 
+.footer-column.text-center {
+    text-align: center;
+}
+
+.footer-column.text-center .social-links {
+    justify-content: center;
+}
+
 .social-links {
     display: flex;
     gap: 1rem;
