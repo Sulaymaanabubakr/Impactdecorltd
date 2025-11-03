@@ -2,24 +2,23 @@
 
 let currentUser = null;
 let deleteItemId = null;
+let editItemId = null;
+let editItemType = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
-    if (auth && db) {
+    if (auth) {
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
-                console.log('User authenticated:', user.email);
                 initDashboard();
             } else {
-                console.log('User not authenticated, redirecting to login');
                 // Redirect to login
                 window.location.href = 'admin-login.html';
             }
         });
     } else {
-        console.error('Firebase services not initialized properly');
-        showToast('Firebase services not available', 'error');
+        showToast('Authentication not available', 'error');
         setTimeout(() => {
             window.location.href = 'admin-login.html';
         }, 2000);
@@ -28,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize Dashboard
 function initDashboard() {
+    initializeTabSwitcher();
+    
     // Load images and videos
     loadMediaList('images');
     loadMediaList('videos');
@@ -42,19 +43,47 @@ function initDashboard() {
     // Handle video upload
     document.getElementById('upload-video-form').addEventListener('submit', (e) => handleMediaUpload(e, 'video'));
     document.getElementById('video-file').addEventListener('change', (e) => previewFile(e, 'video'));
+    
+    // Handle edit form
+    const editForm = document.getElementById('edit-media-form');
+    if (editForm) {
+        editForm.addEventListener('submit', handleEditSubmit);
+    }
+}
+
+function initializeTabSwitcher() {
+    const tabButtons = document.querySelectorAll('.admin-tab-chip');
+    
+    tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const target = button.dataset.tabTarget;
+            if (target) {
+                switchTab(target);
+            }
+        });
+    });
+    
+    // Ensure default tab is active
+    switchTab('images');
 }
 
 // Switch Tab
 function switchTab(tab) {
-    // Update tab buttons
-    const tabs = document.querySelectorAll('.admin-tab');
-    tabs.forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
+    const targetPanel = document.getElementById(`${tab}-tab`);
+    if (!targetPanel) return;
     
-    // Update tab content
-    const contents = document.querySelectorAll('.admin-tab-content');
-    contents.forEach(c => c.classList.remove('active'));
-    document.getElementById(`${tab}-tab`).classList.add('active');
+    const tabButtons = document.querySelectorAll('.admin-tab-chip');
+    tabButtons.forEach((button) => {
+        const isActive = button.dataset.tabTarget === tab;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    
+    const panels = document.querySelectorAll('.admin-panel');
+    panels.forEach((panel) => {
+        const isTarget = panel.id === `${tab}-tab`;
+        panel.classList.toggle('active', isTarget);
+    });
 }
 
 // Preview File
@@ -131,11 +160,6 @@ async function handleMediaUpload(e, type) {
         
         const data = await response.json();
         
-        // Check if user is authenticated before saving
-        if (!currentUser) {
-            throw new Error('User not authenticated');
-        }
-        
         // Save metadata to Firestore
         await db.collection('media').add({
             type: type,
@@ -170,12 +194,16 @@ async function loadMediaList(type) {
     const listContainer = document.getElementById(`${type}-list`);
     const mediaType = type === 'images' ? 'image' : 'video';
     
+    if (!listContainer) return;
+    
+    listContainer.innerHTML = `
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    `;
+    
     try {
-        // Check if user is authenticated
-        if (!currentUser) {
-            throw new Error('User not authenticated');
-        }
-        
         const snapshot = await db.collection('media')
             .where('type', '==', mediaType)
             .orderBy('uploadedAt', 'desc')
@@ -184,7 +212,12 @@ async function loadMediaList(type) {
         listContainer.innerHTML = '';
         
         if (snapshot.empty) {
-            listContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No items uploaded yet.</p>';
+            listContainer.innerHTML = `
+                <div class="media-empty">
+                    <h4>No ${mediaType === 'image' ? 'images' : 'videos'} yet</h4>
+                    <p>Uploads will appear here as soon as you add them.</p>
+                </div>
+            `;
             return;
         }
         
@@ -196,35 +229,57 @@ async function loadMediaList(type) {
         
     } catch (error) {
         console.error('Error loading media:', error);
-        if (error.code === 'permission-denied') {
-            listContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Permission denied. Please check Firestore security rules.</p>';
-            showToast('Permission denied. Please contact administrator.', 'error');
-        } else {
-            listContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Error loading items.</p>';
-        }
+        listContainer.innerHTML = `
+            <div class="media-empty error">
+                <h4>Unable to load items</h4>
+                <p>Please refresh the page or try again shortly.</p>
+            </div>
+        `;
     }
 }
 
 // Create Media Card
 function createMediaCard(item) {
-    const card = document.createElement('div');
+    const card = document.createElement('article');
     card.className = 'media-card';
     
-    const mediaElement = item.type === 'video'
-        ? `<video src="${item.url}" class="media-card-image"></video>`
-        : `<img src="${item.url}" alt="${item.title}" class="media-card-image">`;
+    const safeTitle = typeof sanitizeInput === 'function' ? sanitizeInput(item.title || '') : (item.title || '');
+    const safeDescription = typeof sanitizeInput === 'function' ? sanitizeInput(item.description || '') : (item.description || '');
+    const formattedDate = formatDate(item.uploadedAt);
+    const isVideo = item.type === 'video';
+    const mediaUrl = typeof sanitizeInput === 'function' ? sanitizeInput(item.url || '') : (item.url || '');
+    
+    const mediaElement = isVideo
+        ? `<video src="${mediaUrl}" controls playsinline></video>`
+        : `<img src="${mediaUrl}" alt="${safeTitle}" loading="lazy">`;
     
     card.innerHTML = `
-        ${mediaElement}
-        <div class="media-card-content">
-            <h4>${item.title}</h4>
-            <p>${item.description}</p>
-            <div class="media-card-date">${formatDate(item.uploadedAt)}</div>
+        <div class="media-card-thumb">
+            ${mediaElement}
+        </div>
+        <div class="media-card-meta">
+            <div class="media-card-title">${safeTitle}</div>
+            <div class="media-card-description">${safeDescription}</div>
+        </div>
+        <div class="media-card-footer">
+            <span class="media-card-date">Updated ${formattedDate}</span>
             <div class="media-card-actions">
-                <button class="btn btn-secondary btn-small" onclick="openDeleteModal('${item.id}')">Delete</button>
+                <button type="button" class="admin-btn admin-btn-edit admin-btn-icon media-edit-btn">Edit</button>
+                <button type="button" class="admin-btn admin-btn-danger admin-btn-icon media-delete-btn">Delete</button>
             </div>
         </div>
     `;
+    
+    const editBtn = card.querySelector('.media-edit-btn');
+    const deleteBtn = card.querySelector('.media-delete-btn');
+    
+    if (editBtn) {
+        editBtn.addEventListener('click', () => openEditModal(item));
+    }
+    
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => openDeleteModal(item.id));
+    }
     
     return card;
 }
@@ -245,6 +300,90 @@ function closeDeleteModal() {
     const modal = document.getElementById('delete-modal');
     modal.classList.remove('show');
     document.body.style.overflow = 'auto';
+}
+
+// Open Edit Modal
+function openEditModal(item) {
+    editItemId = item.id;
+    editItemType = item.type;
+    
+    const modal = document.getElementById('edit-modal');
+    if (!modal) return;
+    
+    const titleField = document.getElementById('edit-media-title');
+    const descriptionField = document.getElementById('edit-media-description');
+    const idField = document.getElementById('edit-media-id');
+    const typeField = document.getElementById('edit-media-type');
+    
+    if (titleField) titleField.value = item.title || '';
+    if (descriptionField) descriptionField.value = item.description || '';
+    if (idField) idField.value = item.id;
+    if (typeField) typeField.value = item.type;
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close Edit Modal
+function closeEditModal() {
+    editItemId = null;
+    editItemType = null;
+    
+    const modal = document.getElementById('edit-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+    
+    const editForm = document.getElementById('edit-media-form');
+    if (editForm) {
+        editForm.reset();
+    }
+}
+
+// Handle Edit Submit
+async function handleEditSubmit(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('edit-media-title').value.trim();
+    const description = document.getElementById('edit-media-description').value.trim();
+    const mediaId = document.getElementById('edit-media-id').value;
+    const mediaType = document.getElementById('edit-media-type').value;
+    const saveBtn = document.getElementById('save-edit-btn');
+    const originalText = saveBtn.textContent;
+    
+    if (!title || !description || !mediaId) {
+        showToast('Please fill all fields before saving.', 'error');
+        return;
+    }
+    
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+    
+    try {
+        await db.collection('media').doc(mediaId).update({
+            title,
+            description,
+            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        showToast('Media updated successfully.', 'success');
+        
+        closeEditModal();
+        
+        if (mediaType === 'image') {
+            loadMediaList('images');
+        } else {
+            loadMediaList('videos');
+        }
+        
+    } catch (error) {
+        console.error('Edit error:', error);
+        showToast('Failed to save changes.', 'error');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalText;
+    }
 }
 
 // Handle Delete
