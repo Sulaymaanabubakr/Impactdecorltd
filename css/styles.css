@@ -373,6 +373,11 @@ section {
     margin-bottom: 1.5rem;
 }
 
+/* ===== Services Section ===== */
+.services-section {
+    background: var(--warm-grey);
+}
+
 /* ===== Services Grid ===== */
 .services-grid {
     display: grid;
@@ -928,7 +933,15 @@ section {
         align-items: center;
     }
     
-    .services-grid,
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .service-image {
+        height: 200px;
+    }
+    
     .projects-grid {
         grid-template-columns: 1fr;
     }
@@ -977,6 +990,27 @@ section {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Add subtle animations to images on load */
+img {
+    animation: imageLoad 0.8s ease-out;
+}
+
+@keyframes imageLoad {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }
 
