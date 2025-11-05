@@ -126,6 +126,123 @@ function isVideoFile(url) {
     return videoExtensions.some(ext => url.toLowerCase().includes(ext));
 }
 
+function getMediaType(item = {}) {
+    if (!item || typeof item !== 'object') return 'image';
+
+    if (item.isVideo === true) return 'video';
+    if (item.isImage === true) return 'image';
+
+    const normalize = (value) => typeof value === 'string' ? value.trim().toLowerCase() : '';
+    const typeCandidates = [
+        normalize(item.type),
+        normalize(item.mediaType),
+        normalize(item.resourceType),
+        normalize(item.fileType),
+        normalize(item.category),
+        normalize(item.kind)
+    ].filter(Boolean);
+
+    for (const candidate of typeCandidates) {
+        if (['video', 'videos', 'videoclip', 'clip'].includes(candidate)) return 'video';
+        if (['image', 'images', 'photo', 'picture', 'photograph'].includes(candidate)) return 'image';
+    }
+
+    const mimeType = normalize(item.mimeType || item.contentType);
+    if (mimeType.startsWith('video/')) return 'video';
+    if (mimeType.startsWith('image/')) return 'image';
+
+    const urlCandidates = [
+        item.url,
+        item.mediaUrl,
+        item.secure_url,
+        item.downloadURL,
+        item.storagePath,
+        item.previewUrl
+    ].filter(Boolean);
+
+    if (urlCandidates.some(candidate => isVideoFile(candidate))) {
+        return 'video';
+    }
+
+    return 'image';
+}
+
+function isVideoMedia(item) {
+    return getMediaType(item) === 'video';
+}
+
+function getMediaPoster(item = {}) {
+    const posterCandidates = [
+        item.posterUrl,
+        item.poster,
+        item.thumbnailUrl,
+        item.thumbnail,
+        item.previewImage,
+        item.previewUrl,
+        item.coverImage,
+        item.coverUrl
+    ];
+
+    const poster = posterCandidates.find(candidate => typeof candidate === 'string' && candidate.trim() !== '');
+    return poster ? poster : '';
+}
+
+function normalizeMediaItem(item = {}) {
+    if (!item || typeof item !== 'object') return item;
+
+    const normalizedType = getMediaType(item);
+    const normalizedUrl = item.url || item.mediaUrl || item.secure_url || item.downloadURL || '';
+
+    return {
+        ...item,
+        type: normalizedType,
+        normalizedType,
+        url: normalizedUrl,
+        title: item.title || item.name || '',
+        description: item.description || item.caption || '',
+        posterUrl: getMediaPoster(item)
+    };
+}
+
+function buildMediaElementHTML(item, options = {}) {
+    const settings = {
+        className: 'project-media',
+        lazyLoadImages: true,
+        controls: true,
+        preload: 'metadata',
+        autoplay: false,
+        playsInline: true,
+        ...options
+    };
+
+    if (!item) return '';
+
+    const normalizedItem = normalizeMediaItem(item);
+    const isVideo = isVideoMedia(normalizedItem);
+    const safeUrl = sanitizeInput(normalizedItem.url || '');
+    const safeTitle = sanitizeInput(normalizedItem.title || 'Project media');
+
+    if (!safeUrl) {
+        return `<div class="${settings.className} media-unavailable">Media unavailable</div>`;
+    }
+
+    if (isVideo) {
+        const poster = sanitizeInput(getMediaPoster(normalizedItem));
+        const posterAttr = poster ? ` poster="${poster}"` : '';
+        const controlsAttr = settings.controls ? ' controls' : '';
+        const autoplayAttr = settings.autoplay ? ' autoplay muted loop' : '';
+        const playsInlineAttr = settings.playsInline ? ' playsinline' : '';
+        const preloadAttr = settings.preload ? ` preload="${settings.preload}"` : '';
+
+        return `<video src="${safeUrl}" class="${settings.className}"${controlsAttr}${preloadAttr}${playsInlineAttr}${posterAttr}${autoplayAttr}>
+            <p>Your browser doesn't support video playback. <a href="${safeUrl}" target="_blank" rel="noopener">Download video</a>.</p>
+        </video>`;
+    }
+
+    const loadingAttr = settings.lazyLoadImages ? ' loading="lazy"' : '';
+    return `<img src="${safeUrl}" alt="${safeTitle}" class="${settings.className}"${loadingAttr}>`;
+}
+
 function getVideoThumbnail(videoElement) {
     return new Promise((resolve) => {
         const canvas = document.createElement('canvas');

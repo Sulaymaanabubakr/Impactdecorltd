@@ -123,47 +123,35 @@ async function loadRecentProjects() {
     if (!projectsGrid || !db) return;
     
     try {
-        // Fetch last 10 images and videos
-        const imagesQuery = db.collection('media')
-            .where('type', '==', 'image')
+        const snapshot = await db.collection('media')
             .orderBy('uploadedAt', 'desc')
-            .limit(5);
-            
-        const videosQuery = db.collection('media')
-            .where('type', '==', 'video')
-            .orderBy('uploadedAt', 'desc')
-            .limit(5);
+            .limit(30)
+            .get();
         
-        const [imagesSnapshot, videosSnapshot] = await Promise.all([
-            imagesQuery.get(),
-            videosQuery.get()
-        ]);
+        const normalizedMedia = [];
         
-        const allMedia = [];
-        
-        imagesSnapshot.forEach(doc => {
-            allMedia.push({ id: doc.id, ...doc.data() });
+        snapshot.forEach(doc => {
+            const item = normalizeMediaItem({ id: doc.id, ...doc.data() });
+            if (!item.url) return;
+            normalizedMedia.push(item);
         });
         
-        videosSnapshot.forEach(doc => {
-            allMedia.push({ id: doc.id, ...doc.data() });
-        });
-        
-        // Sort by date and limit to 10
-        allMedia.sort((a, b) => b.uploadedAt - a.uploadedAt);
-        const recentMedia = allMedia.slice(0, 10);
-        
-        projectsGrid.innerHTML = '';
-        
-        if (recentMedia.length === 0) {
+        if (!normalizedMedia.length) {
             projectsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No projects available yet.</p>';
             return;
         }
+
+        const recentMedia = normalizedMedia.slice(0, 10);
+        projectsGrid.innerHTML = '';
         
         recentMedia.forEach(item => {
             const card = createProjectCard(item);
             projectsGrid.appendChild(card);
         });
+
+        if (typeof AOS !== 'undefined') {
+            AOS.refresh();
+        }
         
     } catch (error) {
         console.error('Error loading recent projects:', error);
@@ -177,23 +165,24 @@ function createProjectCard(item) {
     card.className = 'project-card';
     card.setAttribute('data-aos', 'fade-up');
     
-    const mediaElement = item.type === 'video' 
-        ? `<video src="${item.url}" class="project-media" controls preload="metadata" playsinline>
-             <p>Your browser doesn't support video playback.</p>
-           </video>`
-        : `<img src="${item.url}" alt="${item.title || 'Project'}" class="project-media">`;
+    const mediaElement = buildMediaElementHTML(item, {
+        className: 'project-media'
+    });
+
+    const safeTitle = sanitizeInput(item.title || 'Untitled Project');
+    const safeDescription = sanitizeInput(item.description || 'No description available');
     
     card.innerHTML = `
         ${mediaElement}
         <div class="project-info">
-            <h3>${item.title || 'Untitled Project'}</h3>
-            <p>${item.description || 'No description available'}</p>
+            <h3>${safeTitle}</h3>
+            <p>${safeDescription}</p>
             <div class="project-date">${formatDate(item.uploadedAt)}</div>
         </div>
     `;
     
     // Add video event listeners if it's a video
-    if (item.type === 'video') {
+    if (isVideoMedia(item)) {
         setTimeout(() => {
             const video = card.querySelector('video');
             if (video) {
@@ -231,7 +220,7 @@ function setupVideoHandlers(video) {
         console.error('Video failed to load:', video.src);
         const errorMsg = document.createElement('div');
         errorMsg.className = 'video-error';
-        errorMsg.innerHTML = '<p>⚠️ Video unavailable</p>';
+        errorMsg.innerHTML = '<p>Warning: Video unavailable</p>';
         errorMsg.style.cssText = `
             position: absolute;
             top: 50%;

@@ -3,6 +3,8 @@
 let currentGalleryType = 'images';
 let currentLightboxIndex = 0;
 let currentMediaArray = [];
+let galleryMediaCache = [];
+let galleryMediaLoaded = false;
 
 // Switch Gallery Tab
 function switchGalleryTab(type) {
@@ -30,29 +32,13 @@ function switchGalleryTab(type) {
 async function loadImages() {
     const grid = document.getElementById('images-grid');
     if (!grid || !db) return;
-    
+
+    renderGalleryLoadingState(grid, 'images');
+
     try {
-        const snapshot = await db.collection('media')
-            .where('type', '==', 'image')
-            .orderBy('uploadedAt', 'desc')
-            .get();
-        
-        grid.innerHTML = '';
-        currentMediaArray = [];
-        
-        if (snapshot.empty) {
-            grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No images available yet.</p>';
-            return;
-        }
-        
-        snapshot.forEach((doc, index) => {
-            const data = { id: doc.id, ...doc.data() };
-            currentMediaArray.push(data);
-            
-            const card = createGalleryCard(data, index);
-            grid.appendChild(card);
-        });
-        
+        const media = await fetchGalleryMedia();
+        const images = media.filter(item => !isVideoMedia(item));
+        renderGalleryItems(grid, images, 'No images available yet.');
     } catch (error) {
         console.error('Error loading images:', error);
         grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Unable to load images.</p>';
@@ -63,32 +49,68 @@ async function loadImages() {
 async function loadVideos() {
     const grid = document.getElementById('videos-grid');
     if (!grid || !db) return;
-    
+
+    renderGalleryLoadingState(grid, 'videos');
+
     try {
-        const snapshot = await db.collection('media')
-            .where('type', '==', 'video')
-            .orderBy('uploadedAt', 'desc')
-            .get();
-        
-        grid.innerHTML = '';
-        currentMediaArray = [];
-        
-        if (snapshot.empty) {
-            grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No videos available yet.</p>';
-            return;
-        }
-        
-        snapshot.forEach((doc, index) => {
-            const data = { id: doc.id, ...doc.data() };
-            currentMediaArray.push(data);
-            
-            const card = createGalleryCard(data, index);
-            grid.appendChild(card);
-        });
-        
+        const media = await fetchGalleryMedia();
+        const videos = media.filter(item => isVideoMedia(item));
+        renderGalleryItems(grid, videos, 'No videos available yet.');
     } catch (error) {
         console.error('Error loading videos:', error);
         grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Unable to load videos.</p>';
+    }
+}
+
+async function fetchGalleryMedia(forceRefresh = false) {
+    if (!db) return [];
+
+    if (!forceRefresh && galleryMediaLoaded) {
+        return galleryMediaCache;
+    }
+
+    const snapshot = await db.collection('media')
+        .orderBy('uploadedAt', 'desc')
+        .limit(100)
+        .get();
+
+    galleryMediaCache = [];
+
+    snapshot.forEach(doc => {
+        const item = normalizeMediaItem({ id: doc.id, ...doc.data() });
+        if (!item.url) return;
+        galleryMediaCache.push(item);
+    });
+
+    galleryMediaLoaded = true;
+    return galleryMediaCache;
+}
+
+function renderGalleryLoadingState(grid, type) {
+    grid.innerHTML = `
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading ${type}...</p>
+        </div>
+    `;
+}
+
+function renderGalleryItems(grid, items, emptyMessage) {
+    currentMediaArray = items;
+    grid.innerHTML = '';
+
+    if (!items.length) {
+        grid.innerHTML = `<p style="text-align: center; grid-column: 1/-1;">${emptyMessage}</p>`;
+        return;
+    }
+
+    items.forEach((item, index) => {
+        const card = createGalleryCard(item, index);
+        grid.appendChild(card);
+    });
+
+    if (typeof AOS !== 'undefined') {
+        AOS.refresh();
     }
 }
 
@@ -99,23 +121,24 @@ function createGalleryCard(item, index) {
     card.setAttribute('data-aos', 'fade-up');
     card.onclick = () => openLightbox(index);
     
-    const mediaElement = item.type === 'video' 
-        ? `<video src="${item.url}" class="project-media" controls preload="metadata" playsinline>
-             <p>Your browser doesn't support video playback.</p>
-           </video>`
-        : `<img src="${item.url}" alt="${item.title || 'Gallery item'}" class="project-media">`;
-    
+    const mediaElement = buildMediaElementHTML(item, {
+        className: 'project-media'
+    });
+
+    const safeTitle = sanitizeInput(item.title || 'Untitled');
+    const safeDescription = sanitizeInput(item.description || 'No description');
+
     card.innerHTML = `
         ${mediaElement}
         <div class="project-info">
-            <h3>${item.title || 'Untitled'}</h3>
-            <p>${item.description || 'No description'}</p>
+            <h3>${safeTitle}</h3>
+            <p>${safeDescription}</p>
             <div class="project-date">${formatDate(item.uploadedAt)}</div>
         </div>
     `;
     
     // Add video event listeners if it's a video
-    if (item.type === 'video') {
+    if (isVideoMedia(item)) {
         setTimeout(() => {
             const video = card.querySelector('video');
             if (video) {
@@ -153,7 +176,7 @@ function setupVideoHandlers(video) {
         console.error('Video failed to load:', video.src);
         const errorMsg = document.createElement('div');
         errorMsg.className = 'video-error';
-        errorMsg.innerHTML = '<p>⚠️ Video unavailable</p>';
+        errorMsg.innerHTML = '<p>Warning: Video unavailable</p>';
         errorMsg.style.cssText = `
             position: absolute;
             top: 50%;
@@ -185,34 +208,66 @@ function pauseOtherVideos(currentVideo) {
 function openLightbox(index) {
     currentLightboxIndex = index;
     const lightbox = document.getElementById('lightbox');
+    if (!lightbox) return;
     const item = currentMediaArray[index];
-    
+    if (!item) return;
+
     const lightboxImage = document.getElementById('lightbox-image');
     const lightboxVideo = document.getElementById('lightbox-video');
-    
-    if (item.type === 'video') {
+    if (!lightboxImage || !lightboxVideo) return;
+
+    const isVideo = isVideoMedia(item);
+    const mediaUrl = typeof item.url === 'string' ? item.url : '';
+    const posterUrl = typeof getMediaPoster === 'function' ? getMediaPoster(item) : '';
+
+    const existingError = lightboxVideo.parentElement.querySelector('.lightbox-video-error');
+    if (existingError) {
+        existingError.remove();
+    }
+
+    if (isVideo) {
         lightboxImage.style.display = 'none';
         lightboxVideo.style.display = 'block';
-        lightboxVideo.src = item.url;
-        lightboxVideo.load(); // Ensure video loads properly
-        
-        // Add error handling for lightbox video
+        lightboxVideo.pause();
+        lightboxVideo.removeAttribute('src');
+
+        if (posterUrl) {
+            lightboxVideo.setAttribute('poster', posterUrl);
+        } else {
+            lightboxVideo.removeAttribute('poster');
+        }
+
+        if (mediaUrl) {
+            lightboxVideo.src = mediaUrl;
+        }
+
+        lightboxVideo.currentTime = 0;
+        lightboxVideo.load();
+
         lightboxVideo.onerror = () => {
-            console.error('Lightbox video failed to load:', item.url);
+            console.error('Lightbox video failed to load:', mediaUrl);
             const errorDiv = document.createElement('div');
-            errorDiv.innerHTML = '<p style="color: white; text-align: center;">⚠️ Video could not be loaded</p>';
+            errorDiv.className = 'lightbox-video-error';
+            errorDiv.innerHTML = '<p style="color: white; text-align: center;">Video could not be loaded</p>';
             lightboxVideo.parentElement.appendChild(errorDiv);
             lightboxVideo.style.display = 'none';
         };
     } else {
         lightboxVideo.style.display = 'none';
         lightboxVideo.pause();
-        lightboxVideo.src = '';
+        lightboxVideo.removeAttribute('src');
+        lightboxVideo.removeAttribute('poster');
+        lightboxVideo.load();
+
         lightboxImage.style.display = 'block';
-        lightboxImage.src = item.url;
-        lightboxImage.alt = item.title || 'Gallery image';
+        if (mediaUrl) {
+            lightboxImage.src = mediaUrl;
+        } else {
+            lightboxImage.removeAttribute('src');
+        }
+        lightboxImage.alt = sanitizeInput(item.title || 'Gallery image');
     }
-    
+
     lightbox.classList.add('show');
     document.body.style.overflow = 'hidden';
 }
@@ -228,12 +283,13 @@ function closeLightbox() {
     if (lightboxVideo) {
         lightboxVideo.pause();
         lightboxVideo.currentTime = 0;
-        lightboxVideo.src = '';
+        lightboxVideo.removeAttribute('src');
+        lightboxVideo.removeAttribute('poster');
         lightboxVideo.load(); // Reset video element
         
         // Remove any error messages
-        const errorDiv = lightboxVideo.parentElement.querySelector('div');
-        if (errorDiv && errorDiv.innerHTML.includes('⚠️')) {
+        const errorDiv = lightboxVideo.parentElement.querySelector('.lightbox-video-error');
+        if (errorDiv) {
             errorDiv.remove();
         }
     }
