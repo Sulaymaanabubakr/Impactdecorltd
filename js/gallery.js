@@ -100,7 +100,9 @@ function createGalleryCard(item, index) {
     card.onclick = () => openLightbox(index);
     
     const mediaElement = item.type === 'video' 
-        ? `<video src="${item.url}" class="project-media"></video>`
+        ? `<video src="${item.url}" class="project-media" controls preload="metadata" playsinline>
+             <p>Your browser doesn't support video playback.</p>
+           </video>`
         : `<img src="${item.url}" alt="${item.title || 'Gallery item'}" class="project-media">`;
     
     card.innerHTML = `
@@ -112,7 +114,71 @@ function createGalleryCard(item, index) {
         </div>
     `;
     
+    // Add video event listeners if it's a video
+    if (item.type === 'video') {
+        setTimeout(() => {
+            const video = card.querySelector('video');
+            if (video) {
+                setupVideoHandlers(video);
+                
+                // Prevent lightbox opening when clicking video controls
+                video.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+        }, 100);
+    }
+    
     return card;
+}
+
+// Setup video event handlers
+function setupVideoHandlers(video) {
+    // Pause other videos when one starts playing
+    video.addEventListener('play', () => {
+        pauseOtherVideos(video);
+    });
+    
+    // Add loading states
+    video.addEventListener('loadstart', () => {
+        video.style.opacity = '0.7';
+    });
+    
+    video.addEventListener('canplay', () => {
+        video.style.opacity = '1';
+    });
+    
+    // Add error handling
+    video.addEventListener('error', () => {
+        console.error('Video failed to load:', video.src);
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'video-error';
+        errorMsg.innerHTML = '<p>⚠️ Video unavailable</p>';
+        errorMsg.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            background: rgba(255,255,255,0.9);
+            padding: 1rem;
+            border-radius: 8px;
+        `;
+        video.parentElement.style.position = 'relative';
+        video.parentElement.appendChild(errorMsg);
+        video.style.display = 'none';
+    });
+}
+
+// Pause all other videos except the one playing
+function pauseOtherVideos(currentVideo) {
+    const allVideos = document.querySelectorAll('video');
+    allVideos.forEach(video => {
+        if (video !== currentVideo && !video.paused) {
+            video.pause();
+        }
+    });
 }
 
 // Open Lightbox
@@ -128,8 +194,20 @@ function openLightbox(index) {
         lightboxImage.style.display = 'none';
         lightboxVideo.style.display = 'block';
         lightboxVideo.src = item.url;
+        lightboxVideo.load(); // Ensure video loads properly
+        
+        // Add error handling for lightbox video
+        lightboxVideo.onerror = () => {
+            console.error('Lightbox video failed to load:', item.url);
+            const errorDiv = document.createElement('div');
+            errorDiv.innerHTML = '<p style="color: white; text-align: center;">⚠️ Video could not be loaded</p>';
+            lightboxVideo.parentElement.appendChild(errorDiv);
+            lightboxVideo.style.display = 'none';
+        };
     } else {
         lightboxVideo.style.display = 'none';
+        lightboxVideo.pause();
+        lightboxVideo.src = '';
         lightboxImage.style.display = 'block';
         lightboxImage.src = item.url;
         lightboxImage.alt = item.title || 'Gallery image';
@@ -145,8 +223,21 @@ function closeLightbox() {
     const lightboxVideo = document.getElementById('lightbox-video');
     
     lightbox.classList.remove('show');
-    lightboxVideo.pause();
-    lightboxVideo.src = '';
+    
+    // Properly clean up video
+    if (lightboxVideo) {
+        lightboxVideo.pause();
+        lightboxVideo.currentTime = 0;
+        lightboxVideo.src = '';
+        lightboxVideo.load(); // Reset video element
+        
+        // Remove any error messages
+        const errorDiv = lightboxVideo.parentElement.querySelector('div');
+        if (errorDiv && errorDiv.innerHTML.includes('⚠️')) {
+            errorDiv.remove();
+        }
+    }
+    
     document.body.style.overflow = 'auto';
 }
 

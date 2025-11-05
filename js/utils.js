@@ -119,6 +119,42 @@ function updateCurrentYear() {
     });
 }
 
+// Video utilities
+function isVideoFile(url) {
+    if (!url) return false;
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.wmv'];
+    return videoExtensions.some(ext => url.toLowerCase().includes(ext));
+}
+
+function getVideoThumbnail(videoElement) {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        videoElement.addEventListener('loadeddata', () => {
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            ctx.drawImage(videoElement, 0, 0);
+            resolve(canvas.toDataURL());
+        });
+        
+        videoElement.currentTime = 1; // Get frame at 1 second
+    });
+}
+
+function formatVideoDuration(seconds) {
+    if (!seconds || isNaN(seconds)) return '0:00';
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    
+    if (hours > 0) {
+        return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
+
 // Call on page load
 document.addEventListener('DOMContentLoaded', () => {
     updateCurrentYear();

@@ -178,7 +178,9 @@ function createProjectCard(item) {
     card.setAttribute('data-aos', 'fade-up');
     
     const mediaElement = item.type === 'video' 
-        ? `<video src="${item.url}" class="project-media"></video>`
+        ? `<video src="${item.url}" class="project-media" controls preload="metadata" playsinline>
+             <p>Your browser doesn't support video playback.</p>
+           </video>`
         : `<img src="${item.url}" alt="${item.title || 'Project'}" class="project-media">`;
     
     card.innerHTML = `
@@ -190,7 +192,71 @@ function createProjectCard(item) {
         </div>
     `;
     
+    // Add video event listeners if it's a video
+    if (item.type === 'video') {
+        setTimeout(() => {
+            const video = card.querySelector('video');
+            if (video) {
+                setupVideoHandlers(video);
+                
+                // Allow video interaction without interfering with card clicks
+                video.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+        }, 100);
+    }
+    
     return card;
+}
+
+// Setup video event handlers
+function setupVideoHandlers(video) {
+    // Pause other videos when one starts playing
+    video.addEventListener('play', () => {
+        pauseOtherVideos(video);
+    });
+    
+    // Add loading states
+    video.addEventListener('loadstart', () => {
+        video.style.opacity = '0.7';
+    });
+    
+    video.addEventListener('canplay', () => {
+        video.style.opacity = '1';
+    });
+    
+    // Add error handling
+    video.addEventListener('error', () => {
+        console.error('Video failed to load:', video.src);
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'video-error';
+        errorMsg.innerHTML = '<p>⚠️ Video unavailable</p>';
+        errorMsg.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            background: rgba(255,255,255,0.9);
+            padding: 1rem;
+            border-radius: 8px;
+        `;
+        video.parentElement.style.position = 'relative';
+        video.parentElement.appendChild(errorMsg);
+        video.style.display = 'none';
+    });
+}
+
+// Pause all other videos except the one playing
+function pauseOtherVideos(currentVideo) {
+    const allVideos = document.querySelectorAll('video');
+    allVideos.forEach(video => {
+        if (video !== currentVideo && !video.paused) {
+            video.pause();
+        }
+    });
 }
 
 // Set active nav link based on current page

@@ -499,9 +499,76 @@ section {
     transition: var(--transition-smooth);
 }
 
-.project-card:hover img,
-.project-card:hover video {
+.project-card video {
+    background-color: #000;
+}
+
+.project-card video::-webkit-media-controls-panel {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.project-card:hover img {
     transform: scale(1.05);
+}
+
+.project-card:hover video:not(:focus-within) {
+    transform: scale(1.05);
+}
+
+.project-card video:focus-within {
+    outline: 2px solid var(--sun-flare);
+    outline-offset: 2px;
+}
+
+/* Video-specific enhancements */
+.project-card video {
+    cursor: pointer;
+}
+
+.project-card video::-webkit-media-controls {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.project-card video:hover::-webkit-media-controls,
+.project-card video:focus::-webkit-media-controls,
+.project-card video:focus-within::-webkit-media-controls {
+    opacity: 1;
+}
+
+.project-card video::-webkit-media-controls-play-button {
+    background-color: var(--sun-flare);
+    border-radius: 50%;
+}
+
+.project-card video::-webkit-media-controls-timeline {
+    background-color: var(--warm-grey);
+}
+
+.project-card video::-webkit-media-controls-current-time-display,
+.project-card video::-webkit-media-controls-time-remaining-display {
+    color: var(--deep-royal-blue);
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Video error styling */
+.video-error {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 2px solid var(--warm-grey) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 0.9rem !important;
+}
+
+/* Mobile video adjustments */
+@media (max-width: 768px) {
+    .project-card video::-webkit-media-controls {
+        opacity: 1;
+    }
+    
+    .project-card video {
+        height: 200px;
+    }
 }
 
 .project-info {
@@ -1212,13 +1279,18 @@ select:focus {
     gap: 1rem;
 }
 
-.gallery-lightbox-content img {
+.gallery-lightbox-content img,
+.gallery-lightbox-content video {
     width: 100%;
     border-radius: 20px;
     box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
     object-fit: contain;
     max-height: 75vh;
     background: rgba(255, 255, 255, 0.08);
+}
+
+.gallery-lightbox-content video {
+    background: rgba(0, 0, 0, 0.8);
 }
 
 .gallery-lightbox-caption {

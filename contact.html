@@ -65,6 +65,30 @@
             border: none;
         }
         
+        /* WhatsApp button styling */
+        #submit-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #submit-btn:hover {
+            background: linear-gradient(135deg, #128C7E, #25D366);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+        }
+        
+        #submit-btn i {
+            margin-right: 0.5rem;
+            font-size: 1.1em;
+        }
+        
+        .contact-info-card a:hover {
+            color: var(--sun-flare) !important;
+            text-decoration: underline;
+        }
+        
         @media (max-width: 768px) {
             .contact-grid {
                 grid-template-columns: 1fr;
@@ -137,7 +161,7 @@
 
                     <div class="contact-info-card">
                         <h3><i class="ri-facebook-circle-fill"></i> Facebook</h3>
-                        <p>impact worlds</p>
+                        <p><a href="https://www.facebook.com/impactdecor2017" target="_blank" rel="noopener" style="color: var(--deep-royal-blue); font-weight: 500;">impact worlds</a></p>
                         <p style="font-size: 0.9rem; color: var(--text-light);">Follow us on Facebook</p>
                     </div>
 
@@ -151,7 +175,7 @@
                 <!-- Contact Form -->
                 <div data-aos="fade-up" data-aos-delay="200">
                     <h2 class="text-center">Send Us a Message</h2>
-                    <p class="mb-2 text-center">Fill out the form below and we'll get back to you as soon as possible.</p>
+                    <p class="mb-2 text-center">Fill out the form below and we'll connect you directly via WhatsApp for instant communication.</p>
                     
                     <form id="contact-form">
                         <div class="form-group">
@@ -175,8 +199,12 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary" id="submit-btn">
-                            Send Message
+                            <i class="ri-whatsapp-line"></i> Send via WhatsApp
                         </button>
+                        
+                        <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-light);">
+                            <i class="ri-information-line"></i> This will open WhatsApp with your message pre-filled for instant communication
+                        </p>
                     </form>
                 </div>
             </div>
@@ -207,7 +235,7 @@
                     <p><i class="ri-map-pin-2-fill"></i> Hove, Brighton East & West Sussex & London</p>
                     <p><i class="ri-mail-fill"></i> <a href="mailto:Impactdecor2017@gmail.com">Impactdecor2017@gmail.com</a></p>
                     <p><i class="ri-phone-fill"></i> <a href="tel:07760979306">07760 979306</a></p>
-                    <p><i class="ri-facebook-circle-fill"></i> impact worlds</p>
+                    <p><i class="ri-facebook-circle-fill"></i> <a href="https://www.facebook.com/impactdecor2017" target="_blank" rel="noopener">impact worlds</a></p>
                 </div>
                 <div class="footer-column text-center">
                     <h4>Quick Links</h4>
