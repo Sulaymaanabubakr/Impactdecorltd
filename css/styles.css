@@ -526,14 +526,20 @@ section {
 }
 
 .project-card video::-webkit-media-controls {
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.3s ease;
 }
 
-.project-card video:hover::-webkit-media-controls,
-.project-card video:focus::-webkit-media-controls,
-.project-card video:focus-within::-webkit-media-controls {
-    opacity: 1;
+@media (hover: hover) {
+    .project-card video::-webkit-media-controls {
+        opacity: 0;
+    }
+
+    .project-card video:hover::-webkit-media-controls,
+    .project-card video:focus::-webkit-media-controls,
+    .project-card video:focus-within::-webkit-media-controls {
+        opacity: 1;
+    }
 }
 
 .project-card video::-webkit-media-controls-play-button {
@@ -562,10 +568,6 @@ section {
 
 /* Mobile video adjustments */
 @media (max-width: 768px) {
-    .project-card video::-webkit-media-controls {
-        opacity: 1;
-    }
-    
     .project-card video {
         height: 200px;
     }
