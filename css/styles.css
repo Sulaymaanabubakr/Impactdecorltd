@@ -707,12 +707,33 @@ section {
 
 .social-links {
     display: flex;
-    gap: 1rem;
-    font-size: 1.75rem;
+    gap: 1.5rem;
+    font-size: 2.5rem;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    transition: var(--transition-smooth);
 }
 
 .social-links a:hover {
     transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+    .social-links {
+        gap: 1.25rem;
+        font-size: 2.2rem;
+    }
+    
+    .social-links a {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
 }
 
 .footer-bottom {
