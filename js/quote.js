@@ -1,9 +1,15 @@
 // Quote Form JavaScript with Cloudinary Photo Upload Integration
 
-// Cloudinary configuration
-const CLOUDINARY_CLOUD_NAME = 'dsfobvsyg';
-const CLOUDINARY_UPLOAD_PRESET = 'impact_images';
-const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}`;
+// Cloudinary configuration (re-use globals from firebase-config to avoid redeclaration)
+const QUOTE_CLOUDINARY_CLOUD_NAME = typeof CLOUDINARY_CLOUD_NAME !== 'undefined'
+    ? CLOUDINARY_CLOUD_NAME
+    : 'dsfobvsyg';
+const QUOTE_CLOUDINARY_UPLOAD_PRESET = typeof CLOUDINARY_IMAGE_UPLOAD_PRESET !== 'undefined'
+    ? CLOUDINARY_IMAGE_UPLOAD_PRESET
+    : 'impact_images';
+const QUOTE_CLOUDINARY_API_URL = typeof CLOUDINARY_API_URL !== 'undefined'
+    ? CLOUDINARY_API_URL
+    : `https://api.cloudinary.com/v1_1/${QUOTE_CLOUDINARY_CLOUD_NAME}`;
 
 let uploadedPhotoUrls = [];
 
@@ -32,7 +38,7 @@ function handlePhotoSelection(e) {
     const resetPreview = (message = '') => {
         preview.classList.remove('show');
         preview.innerHTML = '';
-        preview.style.display = '';
+        preview.style.display = 'none';
         status.textContent = message;
         status.className = message ? 'upload-status info' : 'upload-status';
     };
@@ -70,7 +76,7 @@ function handlePhotoSelection(e) {
     // Show preview
     preview.innerHTML = '';
     preview.classList.add('show');
-    preview.style.display = '';
+    preview.style.display = 'grid';
     
     Array.from(files).forEach((file, index) => {
         const reader = new FileReader();
@@ -105,11 +111,11 @@ async function uploadPhotos(files) {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            formData.append('upload_preset', QUOTE_CLOUDINARY_UPLOAD_PRESET);
             formData.append('folder', 'quotes');
             formData.append('tags', 'quote,impact-decor');
             
-            const response = await fetch(`${CLOUDINARY_API_URL}/image/upload`, {
+            const response = await fetch(`${QUOTE_CLOUDINARY_API_URL}/image/upload`, {
                 method: 'POST',
                 body: formData
             });
@@ -178,7 +184,17 @@ async function handleQuoteSubmit(e) {
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing...';
     
+    let whatsappWindow = null;
+
     try {
+        // Attempt to open WhatsApp window immediately to avoid popup blockers
+        try {
+            whatsappWindow = window.open('about:blank', '_blank');
+        } catch (popupError) {
+            console.warn('Popup blocked when pre-opening WhatsApp window:', popupError);
+            whatsappWindow = null;
+        }
+
         let photoUrls = [];
         
         // Handle photo uploads if any
@@ -193,6 +209,9 @@ async function handleQuoteSubmit(e) {
                 // Give user option to continue
                 const continueWithoutPhotos = confirm('Photo upload failed. Would you like to continue without photos?');
                 if (!continueWithoutPhotos) {
+                    if (whatsappWindow) {
+                        whatsappWindow.close();
+                    }
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
                     return;
@@ -212,8 +231,9 @@ async function handleQuoteSubmit(e) {
         
         // Show success message
         showToast('Opening WhatsApp with your quote request...', 'success');
-        const whatsappWindow = window.open(whatsappURL, '_blank');
-        if (!whatsappWindow) {
+        if (whatsappWindow) {
+            whatsappWindow.location.href = whatsappURL;
+        } else {
             window.location.href = whatsappURL;
         }
         
@@ -237,7 +257,7 @@ async function handleQuoteSubmit(e) {
         if (preview) {
             preview.classList.remove('show');
             preview.innerHTML = '';
-            preview.style.display = '';
+            preview.style.display = 'none';
         }
         if (status) {
             status.textContent = '';
@@ -248,6 +268,9 @@ async function handleQuoteSubmit(e) {
     } catch (error) {
         console.error('Error processing quote submission:', error);
         showToast('Something went wrong. Please try calling us directly.', 'error');
+        if (whatsappWindow) {
+            whatsappWindow.close();
+        }
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;

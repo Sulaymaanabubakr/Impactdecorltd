@@ -798,7 +798,9 @@ section {
 }
 
 .photo-upload-preview.show {
-    display: block;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
 }
 
 .photo-preview-item {
