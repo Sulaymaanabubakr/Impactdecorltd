@@ -13,8 +13,14 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin.css">
 </head>
-<body class="admin-dashboard-body">
+<body class="admin-dashboard-body auth-checking">
     <div class="admin-dashboard-pattern"></div>
+    <div class="admin-auth-guard" id="auth-guard" aria-live="polite">
+        <div class="auth-guard-card">
+            <div class="spinner" aria-hidden="true"></div>
+            <p id="auth-guard-message">Verifying admin session…</p>
+        </div>
+    </div>
 
     <div class="admin-dashboard-shell">
         <header class="admin-dashboard-header">

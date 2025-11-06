@@ -5,23 +5,62 @@ let deleteItemId = null;
 let editItemId = null;
 let editItemType = null;
 
+const AUTH_GUARD_ID = 'auth-guard';
+const AUTH_GUARD_MESSAGE_ID = 'auth-guard-message';
+
+function showAuthGuard(message) {
+    document.body.classList.add('auth-checking');
+    document.body.classList.remove('auth-ready');
+    if (message) {
+        updateAuthGuardMessage(message);
+    }
+    const guard = document.getElementById(AUTH_GUARD_ID);
+    if (guard) {
+        guard.style.display = 'flex';
+    }
+}
+
+function hideAuthGuard() {
+    document.body.classList.remove('auth-checking');
+    document.body.classList.add('auth-ready');
+    const guard = document.getElementById(AUTH_GUARD_ID);
+    if (guard) {
+        guard.style.display = 'none';
+    }
+}
+
+function updateAuthGuardMessage(message) {
+    if (!message) return;
+    const messageEl = document.getElementById(AUTH_GUARD_MESSAGE_ID);
+    if (messageEl) {
+        messageEl.textContent = message;
+    }
+}
+
+function redirectToLogin() {
+    window.location.replace('admin-login.html');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Check authentication
+    showAuthGuard('Verifying admin session…');
+
     if (auth) {
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
+                hideAuthGuard();
                 initDashboard();
             } else {
-                // Redirect to login
-                window.location.href = 'admin-login.html';
+                showAuthGuard('Redirecting to secure login…');
+                redirectToLogin();
             }
         });
     } else {
+        updateAuthGuardMessage('Authentication unavailable. Redirecting…');
         showToast('Authentication not available', 'error');
         setTimeout(() => {
-            window.location.href = 'admin-login.html';
-        }, 2000);
+            redirectToLogin();
+        }, 1500);
     }
 });
 
@@ -423,7 +462,7 @@ async function handleLogout() {
         await auth.signOut();
         showToast('Logged out successfully', 'success');
         setTimeout(() => {
-            window.location.href = 'admin-login.html';
+            redirectToLogin();
         }, 1000);
     } catch (error) {
         console.error('Logout error:', error);
