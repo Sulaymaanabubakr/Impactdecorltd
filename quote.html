@@ -39,6 +39,25 @@
             font-size: 0.9rem;
             color: var(--text-light);
         }
+        
+        /* WhatsApp button styling */
+        #submit-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #submit-btn:hover {
+            background: linear-gradient(135deg, #128C7E, #25D366);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+        }
+        
+        #submit-btn i {
+            margin-right: 0.5rem;
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
@@ -88,7 +107,7 @@
         <div class="container">
             <div class="quote-form-container" data-aos="fade-up">
                 <h2 class="text-center">Get Your Free Quote</h2>
-                <p class="mb-3 text-center">Fill out the form below and we'll get back to you with a detailed quote within 24 hours. You can also upload photos of the space you'd like us to work on.</p>
+                <p class="mb-3 text-center">Fill out the form below and we'll connect you instantly via WhatsApp for immediate communication and personalized quotes.</p>
                 
                 <form id="quote-form">
                     <div class="form-group">
@@ -134,18 +153,22 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="photo">Upload Photos (Optional)</label>
+                        <label for="photo">📷 Upload Photos (Optional)</label>
                         <input type="file" id="photo" name="photo" accept="image/*" multiple>
                         <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.5rem;">
-                            Upload photos of the space you'd like us to work on (max 5 photos, 10MB each)
+                            Upload photos of your project space (max 5 photos, 10MB each). These will be included in your WhatsApp message for a more accurate quote.
                         </p>
                         <div id="photo-preview" class="photo-upload-preview"></div>
                         <div id="upload-status" class="upload-status"></div>
                     </div>
 
                     <button type="submit" class="btn btn-primary" id="submit-btn">
-                        Request a Free Quote
+                        <i class="ri-whatsapp-line"></i> Send Quote Request via WhatsApp
                     </button>
+                    
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-light);">
+                        <i class="ri-information-line"></i> This will open WhatsApp with your quote details pre-filled for instant communication
+                    </p>
                 </form>
             </div>
         </div>

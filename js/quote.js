@@ -1,4 +1,9 @@
-// Quote Form JavaScript
+// Quote Form JavaScript with Cloudinary Photo Upload Integration
+
+// Cloudinary configuration
+const CLOUDINARY_CLOUD_NAME = 'dsfobvsyg';
+const CLOUDINARY_UPLOAD_PRESET = 'impact_images'; // Using the image upload preset for quote photos
+const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}`;
 
 let uploadedPhotoUrls = [];
 
@@ -21,7 +26,11 @@ function handlePhotoSelection(e) {
     const preview = document.getElementById('photo-preview');
     const status = document.getElementById('upload-status');
     
-    if (files.length === 0) return;
+    if (files.length === 0) {
+        preview.style.display = 'none';
+        status.textContent = '';
+        return;
+    }
     
     // Validate number of files
     if (files.length > 5) {
@@ -37,27 +46,34 @@ function handlePhotoSelection(e) {
             e.target.value = '';
             return;
         }
+        
+        if (!file.type.startsWith('image/')) {
+            showToast(`${file.name} is not an image file.`, 'error');
+            e.target.value = '';
+            return;
+        }
     }
     
     // Show preview
     preview.innerHTML = '';
-    preview.style.display = 'block';
+    preview.classList.add('show');
     
     Array.from(files).forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.maxWidth = '200px';
-            img.style.marginRight = '10px';
-            img.style.marginBottom = '10px';
-            img.style.borderRadius = '8px';
-            preview.appendChild(img);
+            const previewItem = document.createElement('div');
+            previewItem.className = 'photo-preview-item';
+            previewItem.innerHTML = `
+                <img src="${e.target.result}" alt="Preview ${index + 1}">
+                <span class="file-name">${file.name}</span>
+            `;
+            preview.appendChild(previewItem);
         };
         reader.readAsDataURL(file);
     });
     
-    status.textContent = `${files.length} photo(s) selected`;
+    status.textContent = `${files.length} photo(s) selected and ready to upload`;
+    status.className = 'upload-status info';
 }
 
 // Upload Photos to Cloudinary
@@ -65,15 +81,19 @@ async function uploadPhotos(files) {
     const urls = [];
     const status = document.getElementById('upload-status');
     
+    // Cloudinary is now properly configured with real values
+    
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         status.textContent = `Uploading photo ${i + 1} of ${files.length}...`;
+        status.className = 'upload-status info';
         
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', getCloudinaryUploadPreset('image'));
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
             formData.append('folder', 'quotes');
+            formData.append('tags', 'quote,impact-decor');
             
             const response = await fetch(`${CLOUDINARY_API_URL}/image/upload`, {
                 method: 'POST',
@@ -81,19 +101,31 @@ async function uploadPhotos(files) {
             });
             
             if (!response.ok) {
-                throw new Error('Upload failed');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Upload failed: ${response.statusText} - ${errorData.error?.message || 'Unknown error'}`);
             }
             
             const data = await response.json();
-            urls.push(data.secure_url);
+            urls.push({
+                url: data.secure_url,
+                fileName: file.name,
+                publicId: data.public_id
+            });
             
         } catch (error) {
             console.error('Error uploading photo:', error);
-            showToast(`Failed to upload ${file.name}`, 'error');
+            showToast(`Failed to upload ${file.name}: ${error.message}`, 'error');
         }
     }
     
-    status.textContent = urls.length > 0 ? `${urls.length} photo(s) uploaded successfully` : '';
+    if (urls.length > 0) {
+        status.textContent = `${urls.length} photo(s) uploaded successfully!`;
+        status.className = 'upload-status success';
+    } else if (files.length > 0) {
+        status.textContent = 'Photo upload failed. You can still send your message and mention the photos.';
+        status.className = 'upload-status error';
+    }
+    
     return urls;
 }
 
@@ -112,11 +144,7 @@ async function handleQuoteSubmit(e) {
         phone: document.getElementById('phone').value.trim(),
         address: document.getElementById('address').value.trim(),
         service: document.getElementById('service').value,
-        message: document.getElementById('message').value.trim(),
-        photoUrls: [],
-        submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        type: 'quote',
-        status: 'pending'
+        message: document.getElementById('message').value.trim()
     };
     
     // Validate required fields
@@ -132,41 +160,183 @@ async function handleQuoteSubmit(e) {
     
     // Disable submit button
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting...';
+    submitBtn.textContent = 'Processing...';
     
     try {
-        // Upload photos if any
+        let photoUrls = [];
+        
+        // Handle photo uploads if any
         if (photoInput.files.length > 0) {
             submitBtn.textContent = 'Uploading photos...';
-            formData.photoUrls = await uploadPhotos(photoInput.files);
+            showToast('Uploading photos to cloud storage...', 'info');
+            
+            photoUrls = await uploadPhotos(photoInput.files);
+            
+            if (photoUrls.length === 0 && photoInput.files.length > 0) {
+                showToast('Failed to upload photos. Continue without photos or try again.', 'error');
+                // Give user option to continue
+                const continueWithoutPhotos = confirm('Photo upload failed. Would you like to continue without photos?');
+                if (!continueWithoutPhotos) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    return;
+                }
+            }
         }
         
-        submitBtn.textContent = 'Saving...';
+        // Create WhatsApp message with photos
+        submitBtn.textContent = 'Preparing WhatsApp message...';
+        const whatsappMessage = createQuoteWhatsAppMessage(formData, photoUrls);
         
-        // Save to Firestore
-        if (db) {
-            await db.collection('quotes').add(formData);
+        // WhatsApp number (replace with actual business number)
+        const whatsappNumber = '447760979306'; // UK format without +
+        
+        // Create WhatsApp URL
+        const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+        
+        // Show success message
+        showToast('Opening WhatsApp with your quote request...', 'success');
+        
+        // Small delay for user feedback
+        setTimeout(() => {
+            // Open WhatsApp
+            window.open(whatsappURL, '_blank');
             
-            showToast('Your quote request has been submitted successfully! We\'ll contact you within 24 hours.', 'success');
+            // Also save to Firestore as backup if available
+            if (typeof db !== 'undefined' && db) {
+                db.collection('quotes').add({
+                    ...formData,
+                    photoUrls: photoUrls.map(p => ({ url: p.url, fileName: p.fileName })),
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    type: 'quote',
+                    status: 'pending',
+                    sentVia: 'whatsapp',
+                    hasPhotos: photoUrls.length > 0
+                }).catch(error => {
+                    console.error('Error saving backup quote:', error);
+                });
+            }
             
-            // Reset form
+            // Reset form after successful submission
             e.target.reset();
-            document.getElementById('photo-preview').style.display = 'none';
+            document.getElementById('photo-preview').classList.remove('show');
             document.getElementById('upload-status').textContent = '';
-            
-            // Redirect to thank you or home page after 3 seconds
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 3000);
-        } else {
-            throw new Error('Database not initialized');
-        }
+            uploadedPhotoUrls = [];
+        }, 1500);
         
     } catch (error) {
-        console.error('Error submitting quote:', error);
-        showToast('Failed to submit quote. Please try again or call us directly.', 'error');
+        console.error('Error processing quote submission:', error);
+        showToast('Something went wrong. Please try calling us directly.', 'error');
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }, 3000);
     }
+}
+
+// Create formatted WhatsApp message for quote
+function createQuoteWhatsAppMessage(formData, photoUrls = []) {
+    let message = `🏠 *IMPACT DECOR LTD - FREE QUOTE REQUEST*\n`;
+    message += `═══════════════════════════════════════\n\n`;
+    
+    message += `👤 *CLIENT DETAILS:*\n`;
+    message += `• Name: ${formData.name}\n`;
+    message += `• Email: ${formData.email}\n`;
+    message += `• Phone: ${formData.phone}\n`;
+    
+    if (formData.address) {
+        message += `• Address: ${formData.address}\n`;
+    }
+    
+    message += `\n🔧 *SERVICE REQUESTED:*\n`;
+    message += `• ${getServiceDisplayName(formData.service)}\n`;
+    
+    message += `\n📋 *PROJECT DESCRIPTION:*\n`;
+    message += `${formData.message}\n`;
+    
+    // Add photo links if available
+    if (photoUrls && photoUrls.length > 0) {
+        message += `\n📷 *PROJECT PHOTOS (${photoUrls.length} image${photoUrls.length > 1 ? 's' : ''}):*\n`;
+        photoUrls.forEach((photo, index) => {
+            const fileName = photo.fileName.length > 30 ? 
+                photo.fileName.substring(0, 27) + '...' : 
+                photo.fileName;
+            message += `${index + 1}. 📸 ${fileName}\n   🔗 ${photo.url}\n\n`;
+        });
+    }
+    
+    message += `─────────────────────────────────────\n`;
+    message += `📅 *Submitted:* ${new Date().toLocaleString('en-GB', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })}\n`;
+    message += `🌐 *Source:* Impact Decor Website\n\n`;
+    
+    message += `💬 *Hi Impact Decor Team!*\n\n`;
+    message += `I'm interested in getting a free, no-obligation quote for the project detailed above. `;
+    
+    if (photoUrls && photoUrls.length > 0) {
+        message += `I've included ${photoUrls.length} photo${photoUrls.length > 1 ? 's' : ''} showing the current space and what needs to be done. `;
+    }
+    
+    message += `Please let me know:\n`;
+    message += `• Your availability for a site visit/assessment\n`;
+    message += `• Estimated timeframe for the project\n`;
+    message += `• Any additional information you might need\n\n`;
+    message += `Looking forward to working with you!\n\n`;
+    message += `Best regards,\n${formData.name} 👋`;
+    
+    return message;
+}
+
+// Get service display name
+function getServiceDisplayName(serviceValue) {
+    const serviceNames = {
+        'interior-painting': 'Interior Painting',
+        'exterior-painting': 'Exterior Painting',
+        'wallpaper': 'Wallpaper Installation',
+        'plumbing': 'Domestic Plumbing',
+        'tiling': 'Tiling (Kitchens, Bathrooms, Floors)',
+        'coving': 'Coving & Moulding',
+        'surface-prep': 'Surface Preparation & Plaster Repair',
+        'carpentry': 'Carpentry & Fittings',
+        'property-maintenance': 'Property Maintenance & Renovation',
+        'other': 'Other (see project details)'
+    };
+    return serviceNames[serviceValue] || serviceValue;
+}
+
+// Validate email format
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Show toast notification
+function showToast(message, type = 'info') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    // Add to page
+    document.body.appendChild(toast);
+    
+    // Show toast
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    // Remove toast
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 4000);
 }
