@@ -2,21 +2,25 @@
 
 // Cloudinary configuration
 const CLOUDINARY_CLOUD_NAME = 'dsfobvsyg';
-const CLOUDINARY_UPLOAD_PRESET = 'impact_images'; // Using the image upload preset for quote photos
+const CLOUDINARY_UPLOAD_PRESET = 'impact_images';
 const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}`;
 
 let uploadedPhotoUrls = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Quote form JavaScript loaded');
+    
     const quoteForm = document.getElementById('quote-form');
     const photoInput = document.getElementById('photo');
     
     if (quoteForm) {
         quoteForm.addEventListener('submit', handleQuoteSubmit);
+        console.log('Quote form event listener added');
     }
     
     if (photoInput) {
         photoInput.addEventListener('change', handlePhotoSelection);
+        console.log('Photo input event listener added');
     }
 });
 
@@ -311,32 +315,4 @@ function getServiceDisplayName(serviceValue) {
     return serviceNames[serviceValue] || serviceValue;
 }
 
-// Validate email format
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Show toast notification
-function showToast(message, type = 'info') {
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    
-    // Add to page
-    document.body.appendChild(toast);
-    
-    // Show toast
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 100);
-    
-    // Remove toast
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            document.body.removeChild(toast);
-        }, 300);
-    }, 4000);
-}
+// Note: showToast and isValidEmail functions are imported from utils.js
