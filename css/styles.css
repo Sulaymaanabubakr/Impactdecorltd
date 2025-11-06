@@ -748,36 +748,6 @@ section {
     font-size: 0.9rem;
 }
 
-/* ===== Toast Notifications ===== */
-.toast {
-    position: fixed;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--deep-royal-blue);
-    color: var(--pure-white);
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    box-shadow: var(--shadow-lg);
-    z-index: 10000;
-    transition: bottom 0.4s ease;
-    min-width: 300px;
-    text-align: center;
-    font-weight: 500;
-}
-
-.toast.show {
-    bottom: 30px;
-}
-
-.toast.success {
-    background: #10B981;
-}
-
-.toast.error {
-    background: #EF4444;
-}
-
 /* ===== Forms ===== */
 .form-group {
     margin-bottom: 1.5rem;
@@ -1576,30 +1546,32 @@ select:focus {
     box-shadow: var(--shadow-lg);
     max-width: 350px;
     word-wrap: break-word;
+    pointer-events: none;
 }
 
 .toast.show {
     transform: translateX(0);
     opacity: 1;
+    pointer-events: auto;
 }
 
-.toast-success {
+.toast.success {
     background: linear-gradient(135deg, #10B981, #059669);
     border-left: 4px solid #047857;
 }
 
-.toast-error {
+.toast.error {
     background: linear-gradient(135deg, #EF4444, #DC2626);
     border-left: 4px solid #B91C1C;
 }
 
-.toast-info {
+.toast.info {
     background: linear-gradient(135deg, #3B82F6, #2563EB);
     border-left: 4px solid #1D4ED8;
 }
 
 /* WhatsApp toast styling */
-.toast-whatsapp {
+.toast.whatsapp {
     background: linear-gradient(135deg, #25D366, #128C7E);
     border-left: 4px solid #075E54;
 }
