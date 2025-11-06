@@ -126,13 +126,14 @@ async function handleMediaUpload(e, type) {
     
     const title = document.getElementById(`${type}-title`).value.trim();
     const description = document.getElementById(`${type}-description`).value.trim();
+    const service = document.getElementById(`${type}-service`).value;
     const fileInput = document.getElementById(`${type}-file`);
     const file = fileInput.files[0];
     const uploadBtn = document.getElementById(`upload-${type}-btn`);
     const originalText = uploadBtn.textContent;
     
-    if (!title || !description || !file) {
-        showToast('Please fill all fields', 'error');
+    if (!title || !description || !service || !file) {
+        showToast('Please fill all fields including service category', 'error');
         return;
     }
     
@@ -165,6 +166,7 @@ async function handleMediaUpload(e, type) {
             type: type,
             title: title,
             description: description,
+            service: service,
             url: data.secure_url,
             publicId: data.public_id,
             uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),

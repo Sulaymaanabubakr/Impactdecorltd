@@ -17,14 +17,48 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <style>
-        .gallery-tabs {
+        /* Service Filter Tabs */
+        .service-filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .service-filter-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--warm-grey);
+            color: var(--deep-royal-blue);
+            border: none;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            white-space: nowrap;
+        }
+        
+        .service-filter-tab.active {
+            background: var(--sun-flare);
+            color: var(--deep-royal-blue);
+        }
+        
+        .service-filter-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Media Type Tabs */
+        .media-type-tabs {
             display: flex;
             justify-content: center;
             gap: 1rem;
             margin-bottom: 3rem;
         }
         
-        .gallery-tab {
+        .media-tab {
             padding: 1rem 2.5rem;
             background: var(--warm-grey);
             color: var(--deep-royal-blue);
@@ -37,14 +71,48 @@
             transition: var(--transition-smooth);
         }
         
-        .gallery-tab.active {
+        .media-tab.active {
             background: var(--sun-flare);
             color: var(--deep-royal-blue);
         }
         
-        .gallery-tab:hover {
+        .media-tab:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .service-filters {
+                gap: 0.25rem;
+            }
+            
+            .service-filter-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .media-type-tabs {
+                gap: 0.5rem;
+            }
+            
+            .media-tab {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Service Tags */
+        .service-tag {
+            display: inline-block;
+            background: var(--sun-flare);
+            color: var(--deep-royal-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         
         .gallery-content {
@@ -168,32 +236,34 @@
     <!-- Gallery Section -->
     <section style="padding: 5rem 0;">
         <div class="container">
-            <!-- Gallery Tabs -->
-            <div class="gallery-tabs" data-aos="fade-up">
-                <button class="gallery-tab active" onclick="switchGalleryTab('images')">📷 Images</button>
-                <button class="gallery-tab" onclick="switchGalleryTab('videos')">🎥 Videos</button>
+            <!-- Service Filter Tabs -->
+            <div class="service-filters" data-aos="fade-up">
+                <button class="service-filter-tab active" onclick="switchServiceFilter('all')">🏠 All Services</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('painting-decorating')">🎨 Painting & Decorating</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('wallpapering')">📄 Wallpapering</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('tiling-flooring')">🔲 Tiling & Flooring</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('plastering')">🧱 Plastering</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('plumbing')">� Plumbing</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('property-maintenance')">🏗️ Property Maintenance</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('carpentry-fitting')">🪚 Carpentry & Fitting</button>
+                <button class="service-filter-tab" onclick="switchServiceFilter('coving-moulding')">🏛️ Coving & Moulding</button>
             </div>
 
-            <!-- Images Gallery -->
-            <div id="images-gallery" class="gallery-content active">
-                <h2 class="text-center" data-aos="fade-up">Project Images</h2>
-                <p class="section-subtitle text-center" data-aos="fade-up" data-aos-delay="100">Browse our collection of completed work</p>
-                <div class="projects-grid" id="images-grid">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>Loading images...</p>
-                    </div>
-                </div>
+            <!-- Media Type Tabs -->
+            <div class="media-type-tabs" data-aos="fade-up" data-aos-delay="100">
+                <button class="media-tab active" onclick="switchMediaType('all')">📱 All Media</button>
+                <button class="media-tab" onclick="switchMediaType('images')">📷 Images</button>
+                <button class="media-tab" onclick="switchMediaType('videos')">🎥 Videos</button>
             </div>
 
-            <!-- Videos Gallery -->
-            <div id="videos-gallery" class="gallery-content">
-                <h2 class="text-center" data-aos="fade-up">Project Videos</h2>
-                <p class="section-subtitle text-center" data-aos="fade-up" data-aos-delay="100">Watch our projects in action</p>
-                <div class="projects-grid" id="videos-grid">
+            <!-- Gallery Content -->
+            <div id="gallery-content" class="gallery-content active">
+                <h2 class="text-center" data-aos="fade-up" id="gallery-title">Our Work Gallery</h2>
+                <p class="section-subtitle text-center" data-aos="fade-up" data-aos-delay="100" id="gallery-subtitle">Browse our collection of completed projects across all services</p>
+                <div class="projects-grid" id="gallery-grid">
                     <div class="loading">
                         <div class="spinner"></div>
-                        <p>Loading videos...</p>
+                        <p>Loading gallery...</p>
                     </div>
                 </div>
             </div>
