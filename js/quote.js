@@ -29,10 +29,16 @@ function handlePhotoSelection(e) {
     const files = e.target.files;
     const preview = document.getElementById('photo-preview');
     const status = document.getElementById('upload-status');
+    const resetPreview = (message = '') => {
+        preview.classList.remove('show');
+        preview.innerHTML = '';
+        preview.style.display = '';
+        status.textContent = message;
+        status.className = message ? 'upload-status info' : 'upload-status';
+    };
     
     if (files.length === 0) {
-        preview.style.display = 'none';
-        status.textContent = '';
+        resetPreview();
         return;
     }
     
@@ -40,6 +46,7 @@ function handlePhotoSelection(e) {
     if (files.length > 5) {
         showToast('Maximum 5 photos allowed', 'error');
         e.target.value = '';
+        resetPreview();
         return;
     }
     
@@ -48,12 +55,14 @@ function handlePhotoSelection(e) {
         if (file.size > 10 * 1024 * 1024) { // 10MB
             showToast(`${file.name} is too large. Maximum 10MB per file.`, 'error');
             e.target.value = '';
+            resetPreview();
             return;
         }
         
         if (!file.type.startsWith('image/')) {
             showToast(`${file.name} is not an image file.`, 'error');
             e.target.value = '';
+            resetPreview();
             return;
         }
     }
@@ -61,14 +70,15 @@ function handlePhotoSelection(e) {
     // Show preview
     preview.innerHTML = '';
     preview.classList.add('show');
+    preview.style.display = '';
     
     Array.from(files).forEach((file, index) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = (event) => {
             const previewItem = document.createElement('div');
             previewItem.className = 'photo-preview-item';
             previewItem.innerHTML = `
-                <img src="${e.target.result}" alt="Preview ${index + 1}">
+                <img src="${event.target.result}" alt="Preview ${index + 1}">
                 <span class="file-name">${file.name}</span>
             `;
             preview.appendChild(previewItem);
@@ -140,6 +150,8 @@ async function handleQuoteSubmit(e) {
     const submitBtn = document.getElementById('submit-btn');
     const originalText = submitBtn.textContent;
     const photoInput = document.getElementById('photo');
+    const preview = document.getElementById('photo-preview');
+    const status = document.getElementById('upload-status');
     
     // Get form data
     const formData = {
@@ -200,42 +212,45 @@ async function handleQuoteSubmit(e) {
         
         // Show success message
         showToast('Opening WhatsApp with your quote request...', 'success');
+        const whatsappWindow = window.open(whatsappURL, '_blank');
+        if (!whatsappWindow) {
+            window.location.href = whatsappURL;
+        }
         
-        // Small delay for user feedback
-        setTimeout(() => {
-            // Open WhatsApp
-            window.open(whatsappURL, '_blank');
-            
-            // Also save to Firestore as backup if available
-            if (typeof db !== 'undefined' && db) {
-                db.collection('quotes').add({
-                    ...formData,
-                    photoUrls: photoUrls.map(p => ({ url: p.url, fileName: p.fileName })),
-                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    type: 'quote',
-                    status: 'pending',
-                    sentVia: 'whatsapp',
-                    hasPhotos: photoUrls.length > 0
-                }).catch(error => {
-                    console.error('Error saving backup quote:', error);
-                });
-            }
-            
-            // Reset form after successful submission
-            e.target.reset();
-            document.getElementById('photo-preview').classList.remove('show');
-            document.getElementById('upload-status').textContent = '';
-            uploadedPhotoUrls = [];
-        }, 1500);
+        // Also save to Firestore as backup if available
+        if (typeof db !== 'undefined' && db) {
+            db.collection('quotes').add({
+                ...formData,
+                photoUrls: photoUrls.map(p => ({ url: p.url, fileName: p.fileName })),
+                submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                type: 'quote',
+                status: 'pending',
+                sentVia: 'whatsapp',
+                hasPhotos: photoUrls.length > 0
+            }).catch(error => {
+                console.error('Error saving backup quote:', error);
+            });
+        }
+        
+        // Reset form after successful submission
+        e.target.reset();
+        if (preview) {
+            preview.classList.remove('show');
+            preview.innerHTML = '';
+            preview.style.display = '';
+        }
+        if (status) {
+            status.textContent = '';
+            status.className = 'upload-status';
+        }
+        uploadedPhotoUrls = photoUrls;
         
     } catch (error) {
         console.error('Error processing quote submission:', error);
         showToast('Something went wrong. Please try calling us directly.', 'error');
     } finally {
-        setTimeout(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-        }, 3000);
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
     }
 }
 
