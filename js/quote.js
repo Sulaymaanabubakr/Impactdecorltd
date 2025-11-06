@@ -183,18 +183,8 @@ async function handleQuoteSubmit(e) {
     // Disable submit button
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing...';
-    
-    let whatsappWindow = null;
 
     try {
-        // Attempt to open WhatsApp window immediately to avoid popup blockers
-        try {
-            whatsappWindow = window.open('about:blank', '_blank');
-        } catch (popupError) {
-            console.warn('Popup blocked when pre-opening WhatsApp window:', popupError);
-            whatsappWindow = null;
-        }
-
         let photoUrls = [];
         
         // Handle photo uploads if any
@@ -209,9 +199,6 @@ async function handleQuoteSubmit(e) {
                 // Give user option to continue
                 const continueWithoutPhotos = confirm('Photo upload failed. Would you like to continue without photos?');
                 if (!continueWithoutPhotos) {
-                    if (whatsappWindow) {
-                        whatsappWindow.close();
-                    }
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
                     return;
@@ -231,9 +218,9 @@ async function handleQuoteSubmit(e) {
         
         // Show success message
         showToast('Opening WhatsApp with your quote request...', 'success');
-        if (whatsappWindow) {
-            whatsappWindow.location.href = whatsappURL;
-        } else {
+
+        const newTab = window.open(whatsappURL, '_blank');
+        if (!newTab) {
             window.location.href = whatsappURL;
         }
         
@@ -268,9 +255,6 @@ async function handleQuoteSubmit(e) {
     } catch (error) {
         console.error('Error processing quote submission:', error);
         showToast('Something went wrong. Please try calling us directly.', 'error');
-        if (whatsappWindow) {
-            whatsappWindow.close();
-        }
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
@@ -279,61 +263,44 @@ async function handleQuoteSubmit(e) {
 
 // Create formatted WhatsApp message for quote
 function createQuoteWhatsAppMessage(formData, photoUrls = []) {
-    let message = `🏠 *IMPACT DECOR LTD - FREE QUOTE REQUEST*\n`;
-    message += `═══════════════════════════════════════\n\n`;
-    
-    message += `👤 *CLIENT DETAILS:*\n`;
-    message += `• Name: ${formData.name}\n`;
-    message += `• Email: ${formData.email}\n`;
-    message += `• Phone: ${formData.phone}\n`;
-    
+    const submittedAt = new Date().toLocaleString('en-GB');
+    const lines = [];
+
+    lines.push('Impact Decor Ltd - New Quote Request');
+    lines.push('');
+    lines.push(`Name: ${formData.name}`);
+    lines.push(`Email: ${formData.email}`);
+    lines.push(`Phone: ${formData.phone}`);
+
     if (formData.address) {
-        message += `• Address: ${formData.address}\n`;
+        lines.push(`Address: ${formData.address}`);
     }
-    
-    message += `\n🔧 *SERVICE REQUESTED:*\n`;
-    message += `• ${getServiceDisplayName(formData.service)}\n`;
-    
-    message += `\n📋 *PROJECT DESCRIPTION:*\n`;
-    message += `${formData.message}\n`;
-    
-    // Add photo links if available
+
+    lines.push('');
+    lines.push(`Service Needed: ${getServiceDisplayName(formData.service)}`);
+    lines.push('');
+    lines.push('Project Details:');
+    lines.push(formData.message);
+
     if (photoUrls && photoUrls.length > 0) {
-        message += `\n📷 *PROJECT PHOTOS (${photoUrls.length} image${photoUrls.length > 1 ? 's' : ''}):*\n`;
+        lines.push('');
+        lines.push(`Project Photos (${photoUrls.length}):`);
         photoUrls.forEach((photo, index) => {
-            const fileName = photo.fileName.length > 30 ? 
-                photo.fileName.substring(0, 27) + '...' : 
-                photo.fileName;
-            message += `${index + 1}. 📸 ${fileName}\n   🔗 ${photo.url}\n\n`;
+            const fileName = photo.fileName.length > 60
+                ? `${photo.fileName.slice(0, 57)}...`
+                : photo.fileName;
+            lines.push(`${index + 1}. ${fileName}`);
+            lines.push(photo.url);
         });
     }
-    
-    message += `─────────────────────────────────────\n`;
-    message += `📅 *Submitted:* ${new Date().toLocaleString('en-GB', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    })}\n`;
-    message += `🌐 *Source:* Impact Decor Website\n\n`;
-    
-    message += `💬 *Hi Impact Decor Team!*\n\n`;
-    message += `I'm interested in getting a free, no-obligation quote for the project detailed above. `;
-    
-    if (photoUrls && photoUrls.length > 0) {
-        message += `I've included ${photoUrls.length} photo${photoUrls.length > 1 ? 's' : ''} showing the current space and what needs to be done. `;
-    }
-    
-    message += `Please let me know:\n`;
-    message += `• Your availability for a site visit/assessment\n`;
-    message += `• Estimated timeframe for the project\n`;
-    message += `• Any additional information you might need\n\n`;
-    message += `Looking forward to working with you!\n\n`;
-    message += `Best regards,\n${formData.name} 👋`;
-    
-    return message;
+
+    lines.push('');
+    lines.push(`Submitted: ${submittedAt}`);
+    lines.push('Source: Impact Decor Quote Form');
+    lines.push('');
+    lines.push('Thank you! Please let me know the next steps.');
+
+    return lines.join('\n');
 }
 
 // Get service display name
