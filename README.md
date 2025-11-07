@@ -73,7 +73,7 @@ Impactdecorltd/
 #### Services
 - 8 comprehensive services:
   1. Interior & Exterior Painting
-  2. Wallpaper Installation
+  2. Wallpapper, Mural & Wall Panel Installation
   3. Domestic Plumbing
   4. Tiling (Kitchens, Bathrooms, Floors)
   5. Coving & Moulding

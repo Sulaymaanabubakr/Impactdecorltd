@@ -10,7 +10,7 @@ let filteredMediaArray = [];
 const serviceConfig = {
     'all': { title: 'Our Work Gallery', subtitle: 'Browse our collection of completed projects across all services' },
     'painting-decorating': { title: 'Painting & Decorating Gallery', subtitle: 'Professional painting services with stunning finishes' },
-    'wallpapering': { title: 'Wallpapering Gallery', subtitle: 'Expert wallpaper installation with precision' },
+    'wallpapering': { title: 'Wallpapper, Mural & Wall Panel Installation Gallery', subtitle: 'Expert wallpapper, mural & wall panel installation with precision' },
     'tiling-flooring': { title: 'Tiling & Flooring Gallery', subtitle: 'Professional tiling for kitchens, bathrooms, and floors' },
     'plastering': { title: 'Plastering Gallery', subtitle: 'Expert surface preparation and plaster repair' },
     'plumbing': { title: 'Plumbing Gallery', subtitle: 'Professional plumbing installations and repairs' },
@@ -233,7 +233,7 @@ function createGalleryCard(item, index) {
 function getServiceDisplayName(serviceKey) {
     const serviceNames = {
         'painting-decorating': 'Painting & Decorating',
-        'wallpapering': 'Wallpapering',
+        'wallpapering': 'Wallpapper, Mural & Wall Panel Installation',
         'tiling-flooring': 'Tiling & Flooring',
         'plastering': 'Plastering',
         'plumbing': 'Plumbing',

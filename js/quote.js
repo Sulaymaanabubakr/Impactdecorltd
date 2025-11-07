@@ -308,7 +308,7 @@ function getServiceDisplayName(serviceValue) {
     const serviceNames = {
         'interior-painting': 'Interior Painting',
         'exterior-painting': 'Exterior Painting',
-        'wallpaper': 'Wallpaper Installation',
+        'wallpaper': 'Wallpapper, Mural & Wall Panel Installation',
         'plumbing': 'Domestic Plumbing',
         'tiling': 'Tiling (Kitchens, Bathrooms, Floors)',
         'coving': 'Coving & Moulding',
