@@ -15,7 +15,7 @@ const serviceConfig = {
     'plastering': { title: 'Plastering Gallery', subtitle: 'Expert surface preparation and plaster repair' },
     'plumbing': { title: 'Plumbing Gallery', subtitle: 'Professional plumbing installations and repairs' },
     'property-maintenance': { title: 'Property Maintenance Gallery', subtitle: 'Comprehensive renovation and maintenance services' },
-    'carpentry-fitting': { title: 'Carpentry & Fitting Gallery', subtitle: 'Skilled carpentry and professional fitting work' },
+    'carpentry-fitting': { title: 'Carpentry & Flatpacks Fitting Gallery', subtitle: 'Skilled carpentry and professional flatpacks fitting work' },
     'coving-moulding': { title: 'Coving & Moulding Gallery', subtitle: 'Elegant decorative installations and finishing touches' }
 };
 
@@ -238,7 +238,7 @@ function getServiceDisplayName(serviceKey) {
         'plastering': 'Plastering',
         'plumbing': 'Plumbing',
         'property-maintenance': 'Property Maintenance',
-        'carpentry-fitting': 'Carpentry & Fitting',
+        'carpentry-fitting': 'Carpentry & Flatpacks Fitting',
         'coving-moulding': 'Coving & Moulding'
     };
     return serviceNames[serviceKey] || serviceKey;

@@ -78,7 +78,7 @@ Impactdecorltd/
   4. Tiling (Kitchens, Bathrooms, Floors)
   5. Coving & Moulding
   6. Surface Preparation & Plaster Repair
-  7. Carpentry & Fittings
+  7. Carpentry & Flatpacks Fitting
   8. Property Maintenance & Renovation
 - Each service opens in a modal with detailed information
 

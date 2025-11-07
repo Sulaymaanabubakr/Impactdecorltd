@@ -313,7 +313,7 @@ function getServiceDisplayName(serviceValue) {
         'tiling': 'Tiling (Kitchens, Bathrooms, Floors)',
         'coving': 'Coving & Moulding',
         'surface-prep': 'Surface Preparation & Plaster Repair',
-        'carpentry': 'Carpentry & Fittings',
+        'carpentry': 'Carpentry & Flatpacks Fitting',
         'property-maintenance': 'Property Maintenance & Renovation',
         'other': 'Other (see project details)'
     };
