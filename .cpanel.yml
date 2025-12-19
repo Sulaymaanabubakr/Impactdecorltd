@@ -4,10 +4,14 @@ deployment:
     # 1️⃣ Set your live website folder path
     - export DEPLOYPATH=/home2/yustamco/public_html/impactdecorltd.co.uk/
 
-    # 2️⃣ Remove everything in the live folder (keeps it clean)
+
+    # 2️⃣ Create the deploy path if it doesn't exist
+    - /bin/mkdir -p ${DEPLOYPATH}
+
+    # 3️⃣ Remove everything in the live folder (keeps it clean)
     - /bin/rm -rf ${DEPLOYPATH}*
 
-    # 3️⃣ Copy all new files from the repo into the live website folder
+    # 4️⃣ Copy all new files from the repo into the live website folder
     - /bin/cp -R * ${DEPLOYPATH}
 
     # 4️⃣ Optional: Set correct permissions (helps prevent 403 errors)
